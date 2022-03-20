@@ -21,6 +21,7 @@ public class TrabalhadorDAO {
         entityManager.remove(trabalhador);
     }
 
+    // update será implementado na camada de serviços
     public Trabalhador update(Trabalhador trabalhador) {
         return entityManager.merge(trabalhador);
     }
