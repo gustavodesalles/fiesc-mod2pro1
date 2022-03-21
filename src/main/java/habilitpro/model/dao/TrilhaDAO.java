@@ -1,6 +1,6 @@
 package habilitpro.model.dao;
 
-import habilitpro.model.persistence.Trilha;
+import habilitpro.model.persistence.trilha.Trilha;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;

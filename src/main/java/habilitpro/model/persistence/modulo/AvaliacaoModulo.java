@@ -1,5 +1,6 @@
-package habilitpro.model.persistence;
+package habilitpro.model.persistence.modulo;
 
+import habilitpro.model.persistence.trabalhador.Trabalhador;
 import jakarta.persistence.*;
 
 @Entity

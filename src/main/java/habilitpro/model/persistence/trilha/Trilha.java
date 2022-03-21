@@ -1,5 +1,7 @@
-package habilitpro.model.persistence;
+package habilitpro.model.persistence.trilha;
 
+import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.trabalhador.Trabalhador;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -23,24 +25,26 @@ public class Trilha {
     @Column(nullable = false)
     private String apelido;
 
-    @OneToMany(mappedBy = "trilha")
-    private ArrayList<Modulo> modulos;
-
     private int nivelSatisfacao;
     private String anotacoes;
+
+    @ManyToMany
+    @JoinTable(joinColumns = @JoinColumn(name = "trabalhador_id"),
+    inverseJoinColumns = @JoinColumn(name = "trilha_id"))
+    private ArrayList<Trabalhador> trabalhadores;
 
     public Trilha() {
     }
 
-    public Trilha(long id, Empresa empresa, String ocupacao, String nome, String apelido, ArrayList<Modulo> modulos, int nivelSatisfacao, String anotacoes) {
+    public Trilha(long id, Empresa empresa, String ocupacao, String nome, String apelido, int nivelSatisfacao, String anotacoes, ArrayList<Trabalhador> trabalhadores) {
         this.id = id;
         this.empresa = empresa;
         this.ocupacao = ocupacao;
         this.nome = nome;
         this.apelido = apelido;
-        this.modulos = modulos;
         this.nivelSatisfacao = nivelSatisfacao;
         this.anotacoes = anotacoes;
+        this.trabalhadores = trabalhadores;
     }
 
     public long getId() {
@@ -83,14 +87,6 @@ public class Trilha {
         this.apelido = apelido;
     }
 
-    public ArrayList<Modulo> getModulos() {
-        return modulos;
-    }
-
-    public void setModulos(ArrayList<Modulo> modulos) {
-        this.modulos = modulos;
-    }
-
     public int getNivelSatisfacao() {
         return nivelSatisfacao;
     }
@@ -107,16 +103,25 @@ public class Trilha {
         this.anotacoes = anotacoes;
     }
 
+    public ArrayList<Trabalhador> getTrabalhadores() {
+        return trabalhadores;
+    }
+
+    public void setTrabalhadores(ArrayList<Trabalhador> trabalhadores) {
+        this.trabalhadores = trabalhadores;
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("Trilha{");
         sb.append("id=").append(id);
+        sb.append(", empresa=").append(empresa);
         sb.append(", ocupacao='").append(ocupacao).append('\'');
         sb.append(", nome='").append(nome).append('\'');
         sb.append(", apelido='").append(apelido).append('\'');
-        sb.append(", modulos=").append(modulos);
         sb.append(", nivelSatisfacao=").append(nivelSatisfacao);
         sb.append(", anotacoes='").append(anotacoes).append('\'');
+        sb.append(", trabalhadores=").append(trabalhadores);
         sb.append('}');
         return sb.toString();
     }

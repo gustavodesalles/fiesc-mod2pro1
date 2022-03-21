@@ -1,10 +1,12 @@
-package habilitpro.model.persistence;
+package habilitpro.model.persistence.trabalhador;
 
+import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.modulo.AvaliacaoModulo;
+import habilitpro.model.persistence.trilha.Trilha;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 @Entity
 public class Trabalhador {
@@ -29,13 +31,16 @@ public class Trabalhador {
     private String funcao;
 
     private LocalDate dataUltimaAlter;
+
+    @ManyToMany(mappedBy = "trabalhadores")
     private ArrayList<Trilha> trilhas;
-    private LinkedHashMap<Modulo, AvaliacaoModulo> modulosComAv;
+
+    private ArrayList<AvaliacaoModulo> modulosComAv;
 
     public Trabalhador() {
     }
 
-    public Trabalhador(String nome, String cpf, Empresa empresa, String setor, String funcao, LocalDate dataUltimaAlter, ArrayList<Trilha> trilhas, LinkedHashMap<Modulo, AvaliacaoModulo> modulosComAv) {
+    public Trabalhador(String nome, String cpf, Empresa empresa, String setor, String funcao, LocalDate dataUltimaAlter, ArrayList<Trilha> trilhas, ArrayList<AvaliacaoModulo> modulosComAv) {
         this.nome = nome;
         this.cpf = cpf;
         this.empresa = empresa;
@@ -110,11 +115,11 @@ public class Trabalhador {
         this.trilhas = trilhas;
     }
 
-    public LinkedHashMap<Modulo, AvaliacaoModulo> getModulosComAv() {
+    public ArrayList<AvaliacaoModulo> getModulosComAv() {
         return modulosComAv;
     }
 
-    public void setModulosComAv(LinkedHashMap<Modulo, AvaliacaoModulo> modulosComAv) {
+    public void setModulosComAv(ArrayList<AvaliacaoModulo> modulosComAv) {
         this.modulosComAv = modulosComAv;
     }
 }

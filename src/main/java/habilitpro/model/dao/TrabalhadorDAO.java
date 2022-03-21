@@ -1,6 +1,6 @@
 package habilitpro.model.dao;
 
-import habilitpro.model.persistence.Trabalhador;
+import habilitpro.model.persistence.trabalhador.Trabalhador;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;

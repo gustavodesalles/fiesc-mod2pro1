@@ -1,6 +1,7 @@
-package habilitpro.model.persistence;
+package habilitpro.model.persistence.modulo;
 
 import habilitpro.model.enums.EnumStatusModulo;
+import habilitpro.model.persistence.trilha.Trilha;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
@@ -28,6 +29,7 @@ public class Modulo {
     private int prazoLimite;
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.ORDINAL)
     private EnumStatusModulo status;
 
     public Modulo() {

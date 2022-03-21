@@ -1,7 +1,7 @@
 package habilitpro.model.dao;
 
 import habilitpro.model.enums.EnumStatusModulo;
-import habilitpro.model.persistence.Modulo;
+import habilitpro.model.persistence.modulo.Modulo;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;

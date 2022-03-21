@@ -1,10 +1,9 @@
 package habilitpro.model.persistence;
 
+import habilitpro.model.enums.EnumRegionalEmpresa;
 import habilitpro.model.enums.EnumSegmentoEmpresa;
 import habilitpro.model.enums.EnumTipoEmpresa;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
 
 @Entity
 public class Empresa {
@@ -19,10 +18,13 @@ public class Empresa {
     private String cnpj;
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private EnumTipoEmpresa tipoEmpresa;
+
     private String nomeFilial;
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private EnumSegmentoEmpresa segmento;
 
     @Column(nullable = false)
@@ -32,15 +34,13 @@ public class Empresa {
     private String estado;
 
     @Column(nullable = false)
-    private String regionalSenai;
-
-    @OneToMany(mappedBy = "empresa")
-    private ArrayList<Trilha> trilhas;
+    @Enumerated(value = EnumType.STRING)
+    private EnumRegionalEmpresa regionalSenai;
 
     public Empresa() {
     }
 
-    public Empresa(long id, String nome, String cnpj, EnumTipoEmpresa tipoEmpresa, String nomeFilial, EnumSegmentoEmpresa segmento, String cidade, String estado, String regionalSenai, ArrayList<Trilha> trilhas) {
+    public Empresa(long id, String nome, String cnpj, EnumTipoEmpresa tipoEmpresa, String nomeFilial, EnumSegmentoEmpresa segmento, String cidade, String estado, EnumRegionalEmpresa regionalSenai) {
         this.id = id;
         this.nome = nome;
         this.cnpj = cnpj;
@@ -50,7 +50,6 @@ public class Empresa {
         this.cidade = cidade;
         this.estado = estado;
         this.regionalSenai = regionalSenai;
-        this.trilhas = trilhas;
     }
 
     public long getId() {
@@ -117,20 +116,12 @@ public class Empresa {
         this.estado = estado;
     }
 
-    public String getRegionalSenai() {
+    public EnumRegionalEmpresa getRegionalSenai() {
         return regionalSenai;
     }
 
-    public void setRegionalSenai(String regionalSenai) {
+    public void setRegionalSenai(EnumRegionalEmpresa regionalSenai) {
         this.regionalSenai = regionalSenai;
-    }
-
-    public ArrayList<Trilha> getTrilhas() {
-        return trilhas;
-    }
-
-    public void setTrilhas(ArrayList<Trilha> trilhas) {
-        this.trilhas = trilhas;
     }
 
     @Override
@@ -144,8 +135,7 @@ public class Empresa {
         sb.append(", segmento=").append(segmento);
         sb.append(", cidade='").append(cidade).append('\'');
         sb.append(", estado='").append(estado).append('\'');
-        sb.append(", regionalSenai='").append(regionalSenai).append('\'');
-        sb.append(", trilhas=").append(trilhas);
+        sb.append(", regionalSenai='").append(regionalSenai);
         sb.append('}');
         return sb.toString();
     }
