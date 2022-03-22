@@ -1,4 +1,4 @@
-package habilitpro.model.dao;
+package habilitpro.model.dao.modulo;
 
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import jakarta.persistence.EntityManager;

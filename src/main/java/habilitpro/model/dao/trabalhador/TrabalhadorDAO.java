@@ -1,4 +1,4 @@
-package habilitpro.model.dao;
+package habilitpro.model.dao.trabalhador;
 
 import habilitpro.model.persistence.trabalhador.Trabalhador;
 import jakarta.persistence.EntityManager;

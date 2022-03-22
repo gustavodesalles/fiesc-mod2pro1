@@ -1,4 +1,4 @@
-package habilitpro.model.dao;
+package habilitpro.model.dao.trilha;
 
 import habilitpro.model.persistence.trilha.Trilha;
 import jakarta.persistence.EntityManager;
