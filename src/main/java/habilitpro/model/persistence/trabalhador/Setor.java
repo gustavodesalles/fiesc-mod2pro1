@@ -1,5 +1,6 @@
 package habilitpro.model.persistence.trabalhador;
 
+import habilitpro.model.persistence.Empresa;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,14 +9,19 @@ public class Setor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ManyToOne
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
+
     @Column(nullable = false)
-    private String name;
+    private String nome;
 
     public Setor() {
     }
 
-    public Setor(String name) {
-        this.name = name;
+    public Setor(Empresa empresa, String nome) {
+        this.empresa = empresa;
+        this.nome = nome;
     }
 
     public long getId() {
@@ -26,19 +32,19 @@ public class Setor {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("Setor{");
         sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
+        sb.append(", nome='").append(nome).append('\'');
         sb.append('}');
         return sb.toString();
     }

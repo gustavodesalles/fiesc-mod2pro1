@@ -31,12 +31,14 @@ public class EmpresaDAO {
         return entityManager.find(Empresa.class, id);
     }
 
-    public List listAll() {
+    @SuppressWarnings("unchecked")
+    public List<Empresa> listAll() {
         String sql = "SELECT * FROM Empresa";
         return entityManager.createNativeQuery(sql, Empresa.class).getResultList();
     }
 
-    public List listByTipo(EnumTipoEmpresa tipoEmpresa) {
+    @SuppressWarnings("unchecked")
+    public List<Empresa> listByTipo(EnumTipoEmpresa tipoEmpresa) {
         String sql = "SELECT * FROM Empresa WHERE tipoEmpresa =: tipoEmpresa";
         return entityManager.createNativeQuery(sql, Empresa.class).setParameter("tipoEmpresa", tipoEmpresa).getResultList();
     }

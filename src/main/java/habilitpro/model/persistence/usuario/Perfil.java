@@ -2,6 +2,8 @@ package habilitpro.model.persistence.usuario;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+
 @Entity
 public class Perfil {
     @Id
@@ -10,6 +12,9 @@ public class Perfil {
 
     @Column(nullable = false)
     private String nome;
+
+    @ManyToMany(mappedBy = "perfis")
+    private ArrayList<Usuario> usuarios;
 
     public Perfil() {
     }
@@ -27,20 +32,16 @@ public class Perfil {
         this.id = id;
     }
 
-    public String getNome() {
+    public String getnome() {
         return nome;
     }
 
-    public void setNome(String nome) {
+    public void setnome(String nome) {
         this.nome = nome;
     }
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("Perfil{");
-        sb.append("id=").append(id);
-        sb.append(", nome='").append(nome).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return nome;
     }
 }

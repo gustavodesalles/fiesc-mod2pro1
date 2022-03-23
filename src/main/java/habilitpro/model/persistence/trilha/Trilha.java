@@ -29,8 +29,8 @@ public class Trilha {
     private String anotacoes;
 
     @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "trabalhador_id"),
-    inverseJoinColumns = @JoinColumn(name = "trilha_id"))
+    @JoinTable(joinColumns = @JoinColumn(name = "trilha_id"),
+    inverseJoinColumns = @JoinColumn(name = "trabalhador_id"))
     private ArrayList<Trabalhador> trabalhadores;
 
     public Trilha() {

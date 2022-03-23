@@ -30,12 +30,14 @@ public class TrabalhadorDAO {
         return entityManager.find(Trabalhador.class, id);
     }
 
-    public List listAll() {
+    @SuppressWarnings("unchecked")
+    public List<Trabalhador> listAll() {
         String sql = "SELECT * FROM Trabalhador";
         return entityManager.createNativeQuery(sql, Trabalhador.class).getResultList();
     }
 
-    public List listByFunction(String funcao) {
+    @SuppressWarnings("unchecked")
+    public List<Trabalhador> listByFunction(String funcao) {
         String sql = "SELECT * FROM Trabalhador WHERE funcao =: funcao";
         return entityManager.createNativeQuery(sql, Trabalhador.class).setParameter("funcao", funcao).getResultList();
     }

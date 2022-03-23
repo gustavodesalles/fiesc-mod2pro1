@@ -27,12 +27,14 @@ public class TrilhaDAO {
         return entityManager.find(Trilha.class, id);
     }
 
-    public List listAll() {
+    @SuppressWarnings("unchecked")
+    public List<Trilha> listAll() {
         String sql = "SELECT * FROM Trilha";
         return entityManager.createNativeQuery(sql, Trilha.class).getResultList();
     }
 
-    public List listByName(String name) {
+    @SuppressWarnings("unchecked")
+    public List<Trilha> listByName(String name) {
         String sql = "SELECT * FROM Trilha WHERE name =: name";
         return entityManager.createNativeQuery(sql, Trilha.class).setParameter("name", name).getResultList();
     }

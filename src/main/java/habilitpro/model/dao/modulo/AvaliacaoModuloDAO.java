@@ -27,7 +27,8 @@ public class AvaliacaoModuloDAO {
         return entityManager.find(AvaliacaoModulo.class, id);
     }
 
-    public List listAll() {
+    @SuppressWarnings("unchecked")
+    public List<AvaliacaoModulo> listAll() {
         String sql = "SELECT * FROM AvaliacaoModulo";
         return entityManager.createNativeQuery(sql, AvaliacaoModulo.class).getResultList();
     }

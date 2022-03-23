@@ -28,12 +28,14 @@ public class ModuloDAO {
         return entityManager.find(Modulo.class, id);
     }
 
-    public List listAll() {
+    @SuppressWarnings("unchecked")
+    public List<Modulo> listAll() {
         String sql = "SELECT * FROM modulo";
         return entityManager.createNativeQuery(sql, Modulo.class).getResultList();
     }
 
-    public List listByStatus(EnumStatusModulo status) {
+    @SuppressWarnings("unchecked")
+    public List<Modulo> listByStatus(EnumStatusModulo status) {
         String sql = "SELECT * FROM modulo WHERE status =: status";
         return entityManager.createNativeQuery(sql, Modulo.class).setParameter("status", status).getResultList();
     }

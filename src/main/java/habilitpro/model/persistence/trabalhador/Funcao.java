@@ -9,16 +9,17 @@ public class Funcao {
     private long id;
 
     @Column(nullable = false)
-    private String name;
+    private String nome;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "setor_id")
     private Setor setor;
 
     public Funcao() {
     }
 
-    public Funcao(String name, Setor setor) {
-        this.name = name;
+    public Funcao(String nome, Setor setor) {
+        this.nome = nome;
         this.setor = setor;
     }
 
@@ -30,12 +31,12 @@ public class Funcao {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public Setor getSetor() {
@@ -50,7 +51,7 @@ public class Funcao {
     public String toString() {
         final StringBuffer sb = new StringBuffer("Funcao{");
         sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
+        sb.append(", nome='").append(nome).append('\'');
         sb.append(", setor=").append(setor);
         sb.append('}');
         return sb.toString();
