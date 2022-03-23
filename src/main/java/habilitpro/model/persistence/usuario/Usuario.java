@@ -1,8 +1,9 @@
 package habilitpro.model.persistence.usuario;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Usuario {
@@ -25,7 +26,7 @@ public class Usuario {
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "perfil_id"))
-    private ArrayList<Perfil> perfis;
+    private List<Perfil> perfis;
 
     public Usuario() {
     }
@@ -78,7 +79,7 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public ArrayList<Perfil> getPerfis() {
+    public List<Perfil> getPerfis() {
         return perfis;
     }
 

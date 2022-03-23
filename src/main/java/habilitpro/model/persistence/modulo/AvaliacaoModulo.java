@@ -1,7 +1,7 @@
 package habilitpro.model.persistence.modulo;
 
 import habilitpro.model.persistence.trabalhador.Trabalhador;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class AvaliacaoModulo {

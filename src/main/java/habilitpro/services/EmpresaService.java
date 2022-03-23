@@ -3,8 +3,8 @@ package habilitpro.services;
 import habilitpro.model.dao.EmpresaDAO;
 import habilitpro.model.enums.EnumTipoEmpresa;
 import habilitpro.model.persistence.Empresa;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

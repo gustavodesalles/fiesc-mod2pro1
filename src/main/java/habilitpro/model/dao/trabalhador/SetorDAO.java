@@ -2,7 +2,7 @@ package habilitpro.model.dao.trabalhador;
 
 import habilitpro.model.persistence.Empresa;
 import habilitpro.model.persistence.trabalhador.Setor;
-import jakarta.persistence.EntityManager;
+import javax.persistence.EntityManager;
 
 import java.util.List;
 

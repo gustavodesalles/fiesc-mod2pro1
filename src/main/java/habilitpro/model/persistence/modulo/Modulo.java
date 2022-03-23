@@ -2,7 +2,7 @@ package habilitpro.model.persistence.modulo;
 
 import habilitpro.model.enums.EnumStatusModulo;
 import habilitpro.model.persistence.trilha.Trilha;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.time.OffsetDateTime;
 

@@ -1,7 +1,7 @@
 package habilitpro.model.dao.usuario;
 
 import habilitpro.model.persistence.usuario.Usuario;
-import jakarta.persistence.EntityManager;
+import javax.persistence.EntityManager;
 
 import java.util.List;
 

@@ -3,10 +3,11 @@ package habilitpro.model.persistence.trabalhador;
 import habilitpro.model.persistence.Empresa;
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import habilitpro.model.persistence.trilha.Trilha;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Trabalhador {
@@ -33,9 +34,9 @@ public class Trabalhador {
     private LocalDate dataUltimaAlter;
 
     @ManyToMany(mappedBy = "trabalhadores")
-    private ArrayList<Trilha> trilhas;
+    private List<Trilha> trilhas;
 
-    private ArrayList<AvaliacaoModulo> modulosComAv;
+    private List<AvaliacaoModulo> modulosComAv;
 
     public Trabalhador() {
     }
@@ -107,7 +108,7 @@ public class Trabalhador {
         this.dataUltimaAlter = dataUltimaAlter;
     }
 
-    public ArrayList<Trilha> getTrilhas() {
+    public List<Trilha> getTrilhas() {
         return trilhas;
     }
 
@@ -115,7 +116,7 @@ public class Trabalhador {
         this.trilhas = trilhas;
     }
 
-    public ArrayList<AvaliacaoModulo> getModulosComAv() {
+    public List<AvaliacaoModulo> getModulosComAv() {
         return modulosComAv;
     }
 

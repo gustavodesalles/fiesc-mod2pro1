@@ -3,7 +3,7 @@ package habilitpro.model.persistence;
 import habilitpro.model.enums.EnumRegionalEmpresa;
 import habilitpro.model.enums.EnumSegmentoEmpresa;
 import habilitpro.model.enums.EnumTipoEmpresa;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class Empresa {
@@ -40,8 +40,7 @@ public class Empresa {
     public Empresa() {
     }
 
-    public Empresa(long id, String nome, String cnpj, EnumTipoEmpresa tipoEmpresa, String nomeFilial, EnumSegmentoEmpresa segmento, String cidade, String estado, EnumRegionalEmpresa regionalSenai) {
-        this.id = id;
+    public Empresa(String nome, String cnpj, EnumTipoEmpresa tipoEmpresa, String nomeFilial, EnumSegmentoEmpresa segmento, String cidade, String estado, EnumRegionalEmpresa regionalSenai) {
         this.nome = nome;
         this.cnpj = cnpj;
         this.tipoEmpresa = tipoEmpresa;

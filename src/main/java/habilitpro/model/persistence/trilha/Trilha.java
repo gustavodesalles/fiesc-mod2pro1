@@ -2,9 +2,10 @@ package habilitpro.model.persistence.trilha;
 
 import habilitpro.model.persistence.Empresa;
 import habilitpro.model.persistence.trabalhador.Trabalhador;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Trilha {
@@ -17,7 +18,7 @@ public class Trilha {
     private Empresa empresa;
 
     @Column(nullable = false)
-    private String ocupacao;
+    private Ocupacao ocupacao;
 
     @Column(nullable = false)
     private String nome;
@@ -31,17 +32,16 @@ public class Trilha {
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "trilha_id"),
     inverseJoinColumns = @JoinColumn(name = "trabalhador_id"))
-    private ArrayList<Trabalhador> trabalhadores;
+    private List<Trabalhador> trabalhadores;
 
     public Trilha() {
     }
 
-    public Trilha(long id, Empresa empresa, String ocupacao, String nome, String apelido, int nivelSatisfacao, String anotacoes, ArrayList<Trabalhador> trabalhadores) {
-        this.id = id;
+    public Trilha(Empresa empresa, Ocupacao ocupacao, /*String nome, String apelido,*/ int nivelSatisfacao, String anotacoes, ArrayList<Trabalhador> trabalhadores) {
         this.empresa = empresa;
         this.ocupacao = ocupacao;
-        this.nome = nome;
-        this.apelido = apelido;
+        //this.nome = nome;
+        //this.apelido = apelido;
         this.nivelSatisfacao = nivelSatisfacao;
         this.anotacoes = anotacoes;
         this.trabalhadores = trabalhadores;
@@ -63,11 +63,11 @@ public class Trilha {
         this.empresa = empresa;
     }
 
-    public String getOcupacao() {
+    public Ocupacao getOcupacao() {
         return ocupacao;
     }
 
-    public void setOcupacao(String ocupacao) {
+    public void setOcupacao(Ocupacao ocupacao) {
         this.ocupacao = ocupacao;
     }
 
@@ -103,7 +103,7 @@ public class Trilha {
         this.anotacoes = anotacoes;
     }
 
-    public ArrayList<Trabalhador> getTrabalhadores() {
+    public List<Trabalhador> getTrabalhadores() {
         return trabalhadores;
     }
 

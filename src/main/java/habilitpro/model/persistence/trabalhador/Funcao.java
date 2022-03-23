@@ -1,6 +1,6 @@
 package habilitpro.model.persistence.trabalhador;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class Funcao {

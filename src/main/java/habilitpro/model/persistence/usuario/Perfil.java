@@ -1,8 +1,9 @@
 package habilitpro.model.persistence.usuario;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Perfil {
@@ -14,7 +15,7 @@ public class Perfil {
     private String nome;
 
     @ManyToMany(mappedBy = "perfis")
-    private ArrayList<Usuario> usuarios;
+    private List<Usuario> usuarios;
 
     public Perfil() {
     }

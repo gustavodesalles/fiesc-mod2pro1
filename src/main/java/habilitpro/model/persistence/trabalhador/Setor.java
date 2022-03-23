@@ -1,7 +1,7 @@
 package habilitpro.model.persistence.trabalhador;
 
 import habilitpro.model.persistence.Empresa;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class Setor {
