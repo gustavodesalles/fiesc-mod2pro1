@@ -1,8 +1,6 @@
 package habilitpro.services.usuario;
 
 import habilitpro.model.dao.usuario.PerfilDAO;
-import habilitpro.model.persistence.trilha.Ocupacao;
-import habilitpro.model.persistence.trilha.Trilha;
 import habilitpro.model.persistence.usuario.Perfil;
 import habilitpro.model.persistence.usuario.Usuario;
 import org.apache.logging.log4j.LogManager;

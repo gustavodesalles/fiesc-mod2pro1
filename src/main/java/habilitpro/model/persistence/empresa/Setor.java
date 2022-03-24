@@ -32,6 +32,14 @@ public class Setor {
         this.id = id;
     }
 
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
+
     public String getNome() {
         return nome;
     }
