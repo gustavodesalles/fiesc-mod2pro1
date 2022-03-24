@@ -42,7 +42,7 @@ public class FuncaoDAO {
 
     @SuppressWarnings("unchecked")
     public List<Funcao> listBySetor(Setor setor) {
-        String sql = "SELECT * FROM Funcao WHERE setor =: setor";
-        return entityManager.createNativeQuery(sql, Funcao.class).setParameter("setor", setor).getResultList();
+        String sql = "SELECT * FROM Funcao WHERE setor_id = " + setor.getId();
+        return entityManager.createNativeQuery(sql, Funcao.class).setParameter("setor_id", setor.getId()).getResultList();
     }
 }
