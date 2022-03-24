@@ -27,7 +27,7 @@ public class EmpresaService {
         validateIfNull(empresa);
 
         String nome = empresa.getNome();
-        if (nome.isEmpty()) {
+        if (nome == null || nome.isBlank()) {
             LOG.error("O nome da empresa está nulo!");
             throw new RuntimeException("Nome nulo");
         }

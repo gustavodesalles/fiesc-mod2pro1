@@ -1,6 +1,8 @@
 package habilitpro.model.dao.modulo;
 
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
+import habilitpro.model.persistence.modulo.Modulo;
+
 import javax.persistence.EntityManager;
 
 import java.util.List;
@@ -33,6 +35,10 @@ public class AvaliacaoModuloDAO {
         return entityManager.createNativeQuery(sql, AvaliacaoModulo.class).getResultList();
     }
 
-    // A classe "AvaliacaoModulo" foi implementada somente como conveniência para avaliar o
-    // desempenho do Trabalhador em cada Módulo, então omite-se o método de listagem com filtro.
+    @SuppressWarnings("unchecked")
+    public List<AvaliacaoModulo> listByModulo(Modulo modulo) {
+        String sql = "SELECT * FROM AvaliacaoModulo where modulo_id = " + modulo.getId();
+        return entityManager.createNativeQuery(sql, AvaliacaoModulo.class).setParameter("modulo_id", modulo.getId()).getResultList();
+    }
+
 }

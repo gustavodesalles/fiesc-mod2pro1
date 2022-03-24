@@ -23,9 +23,9 @@ public class AvaliacaoModulo {
     public AvaliacaoModulo() {
     }
 
-    public AvaliacaoModulo(int notaAvaliacao, String anotacoes, Modulo modulo, Trabalhador trabalhador) {
-        this.notaAvaliacao = notaAvaliacao;
-        this.anotacoes = anotacoes;
+    public AvaliacaoModulo(Modulo modulo, Trabalhador trabalhador) {
+        this.notaAvaliacao = 0;
+        this.anotacoes = null;
         this.modulo = modulo;
         this.trabalhador = trabalhador;
     }
@@ -43,7 +43,7 @@ public class AvaliacaoModulo {
     }
 
     public void setNotaAvaliacao(int notaAvaliacao) {
-        this.notaAvaliacao = notaAvaliacao;
+        if (notaAvaliacao >= 1 && notaAvaliacao <= 5) this.notaAvaliacao = notaAvaliacao;
     }
 
     public String getAnotacoes() {

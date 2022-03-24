@@ -35,17 +35,16 @@ public class Modulo {
     public Modulo() {
     }
 
-    public Modulo(long id, Trilha trilha, String nome, String habilidades, String tarefa, OffsetDateTime dataInicio, OffsetDateTime dataFim, OffsetDateTime dataPrazo, int prazoLimite, EnumStatusModulo status) {
-        this.id = id;
+    public Modulo(Trilha trilha, String nome, String habilidades, String tarefa) {
         this.trilha = trilha;
         this.nome = nome;
         this.habilidades = habilidades;
         this.tarefa = tarefa;
-        this.dataInicio = dataInicio;
-        this.dataFim = dataFim;
-        this.dataPrazo = dataPrazo;
-        this.prazoLimite = prazoLimite;
-        this.status = status;
+        this.dataInicio = null;
+        this.dataFim = null;
+        this.dataPrazo = null;
+        this.prazoLimite = 10;
+        this.status = EnumStatusModulo.NAO_INIC;
     }
 
     public long getId() {

@@ -97,7 +97,7 @@ public class TrilhaService {
 
     public List<Trilha> listAll() {
         LOG.info("Preparando para listar as trilhas.");
-        List<Trilha> trilhas = this.trilhaDAO.listAll();
+        List<Trilha> trilhas = trilhaDAO.listAll();
 
         if (trilhas == null) {
             LOG.error("Não foram encontradas trilhas!");
@@ -115,7 +115,7 @@ public class TrilhaService {
         }
 
         LOG.info("Preparando para buscar as trilhas da empresa: " + empresa.getNome());
-        List<Trilha> trilhas = this.trilhaDAO.listByEmpresa(empresa);
+        List<Trilha> trilhas = trilhaDAO.listByEmpresa(empresa);
 
         if (trilhas == null) {
             LOG.error("Não foram encontradas trilhas da empresa " + empresa.getNome() + "!");

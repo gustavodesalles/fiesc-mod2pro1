@@ -2,6 +2,8 @@ package habilitpro.model.dao.modulo;
 
 import habilitpro.model.enums.EnumStatusModulo;
 import habilitpro.model.persistence.modulo.Modulo;
+import habilitpro.model.persistence.trilha.Trilha;
+
 import javax.persistence.EntityManager;
 
 import java.util.List;
@@ -38,5 +40,11 @@ public class ModuloDAO {
     public List<Modulo> listByStatus(EnumStatusModulo status) {
         String sql = "SELECT * FROM modulo WHERE status =: status";
         return entityManager.createNativeQuery(sql, Modulo.class).setParameter("status", status).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Modulo> listByTrilha(Trilha trilha) {
+        String sql = "SELECT * FROM modulo WHERE trilha_id =" + trilha.getId();
+        return entityManager.createNativeQuery(sql, Modulo.class).setParameter("trilha_id", trilha.getId()).getResultList();
     }
 }
