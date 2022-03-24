@@ -1,4 +1,4 @@
-package habilitpro.model.persistence;
+package habilitpro.model.persistence.empresa;
 
 import habilitpro.model.enums.EnumRegionalEmpresa;
 import habilitpro.model.enums.EnumSegmentoEmpresa;

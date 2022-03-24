@@ -1,6 +1,6 @@
 package habilitpro.model.persistence.trilha;
 
-import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.trabalhador.Trabalhador;
 import javax.persistence.*;
 
@@ -36,14 +36,14 @@ public class Trilha {
     public Trilha() {
     }
 
-    public Trilha(Empresa empresa, Ocupacao ocupacao, int nivelSatisfacao, String anotacoes, ArrayList<Trabalhador> trabalhadores) {
+    public Trilha(Empresa empresa, Ocupacao ocupacao, int nivelSatisfacao, String anotacoes) {
         this.empresa = empresa;
         this.ocupacao = ocupacao;
         this.nome = "";
         this.apelido = "";
         this.nivelSatisfacao = nivelSatisfacao;
         this.anotacoes = anotacoes;
-        this.trabalhadores = trabalhadores;
+        this.trabalhadores = new ArrayList<Trabalhador>();
     }
 
     public long getId() {

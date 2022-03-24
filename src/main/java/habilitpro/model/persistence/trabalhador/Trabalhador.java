@@ -1,6 +1,6 @@
 package habilitpro.model.persistence.trabalhador;
 
-import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.*;
@@ -42,15 +42,15 @@ public class Trabalhador {
     public Trabalhador() {
     }
 
-    public Trabalhador(String nome, String cpf, Empresa empresa, String setor, String funcao, LocalDate dataUltimaAlter, ArrayList<Trilha> trilhas, ArrayList<AvaliacaoModulo> modulosComAv) {
+    public Trabalhador(String nome, String cpf, Empresa empresa, String setor, String funcao, LocalDate dataUltimaAlter) {
         this.nome = nome;
         this.cpf = cpf;
         this.empresa = empresa;
         this.setor = setor;
         this.funcao = funcao;
         this.dataUltimaAlter = dataUltimaAlter;
-        this.trilhas = trilhas;
-        this.modulosComAv = modulosComAv;
+        this.trilhas = new ArrayList<Trilha>();
+        this.modulosComAv = new ArrayList<AvaliacaoModulo>();
     }
 
     public long getId() {

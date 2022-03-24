@@ -2,6 +2,7 @@ package habilitpro.model.dao.usuario;
 
 import habilitpro.model.persistence.usuario.Perfil;
 import javax.persistence.EntityManager;
+import java.util.List;
 
 public class PerfilDAO {
     private EntityManager entityManager;
@@ -30,4 +31,13 @@ public class PerfilDAO {
         String sql = "SELECT * FROM Perfil WHERE nome =: nome";
         return (Perfil) entityManager.createNativeQuery(sql, Perfil.class).getSingleResult();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Perfil> listAll() {
+        String sql = "SELECT * FROM Perfil";
+        return entityManager.createNativeQuery(sql, Perfil.class).getResultList();
+    }
+
+    //Como haverá somente três perfis, não há muita utilidade em implementar
+    // a listagem com filtro, então esta será omissa.
 }

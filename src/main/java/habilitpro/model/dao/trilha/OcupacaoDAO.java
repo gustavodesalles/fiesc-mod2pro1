@@ -35,6 +35,12 @@ public class OcupacaoDAO {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Ocupacao> listAll() {
+        String sql = "SELECT * FROM Ocupacao";
+        return entityManager.createNativeQuery(sql, Ocupacao.class).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Ocupacao> listByTrilha(Trilha trilha) {
         String sql = "SELECT * FROM Ocupacao WHERE trilha =: trilha";
         return entityManager.createNativeQuery(sql, Ocupacao.class).setParameter("trilha", trilha).getResultList();

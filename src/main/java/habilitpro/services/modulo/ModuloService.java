@@ -29,7 +29,7 @@ public class ModuloService {
         String nome = modulo.getNome();
         if (nome == null || nome.isBlank()) {
             LOG.error("O nome do módulo está nulo!");
-            throw new RuntimeException("Nome nulo");
+            throw new EntityNotFoundException("Nome nulo");
         }
 
         beginTransaction();
@@ -43,7 +43,7 @@ public class ModuloService {
 
         if (id == null) {
             LOG.error("O ID do módulo está nulo!");
-            throw new RuntimeException("ID nulo");
+            throw new EntityNotFoundException("ID nulo");
         }
 
         Modulo modulo = moduloDAO.getById(id);
@@ -58,7 +58,7 @@ public class ModuloService {
     public void update(Modulo novoModulo, Long id) {
         if (novoModulo == null || id == null) {
             LOG.error("Um dos parâmetros está nulo!");
-            throw new RuntimeException("Parâmetro nulo");
+            throw new EntityNotFoundException("Parâmetro nulo");
         }
 
         Modulo modulo = moduloDAO.getById(id);
@@ -85,7 +85,7 @@ public class ModuloService {
 
         if (modulos == null) {
             LOG.error("Não foram encontrados módulos!");
-            throw new RuntimeException("Não há módulos");
+            throw new EntityNotFoundException("Não há módulos");
         }
 
         LOG.info("Número de módulos encontrados: " + modulos.size());
@@ -95,7 +95,7 @@ public class ModuloService {
     public List<Modulo> listByStatus(EnumStatusModulo statusModulo) {
         if (statusModulo == null) {
             LOG.error("O status do módulo está nulo!");
-            throw new RuntimeException("Status nulo");
+            throw new EntityNotFoundException("Status nulo");
         }
 
         LOG.info("Preparando para listar os módulos com status: " + statusModulo);
@@ -103,7 +103,7 @@ public class ModuloService {
 
         if (modulos == null) {
             LOG.error("Não foram encontrados módulos com o status " + statusModulo + "!");
-            throw new RuntimeException("Não há módulos com o status informado");
+            throw new EntityNotFoundException("Não há módulos com o status informado");
         }
 
         LOG.info("Número de módulos encontrados: " + modulos.size());
@@ -113,7 +113,7 @@ public class ModuloService {
     public List<Modulo> listByTrilha(Trilha trilha) {
         if (trilha == null) {
             LOG.error("A trilha está nula!");
-            throw new RuntimeException("Trilha nula");
+            throw new EntityNotFoundException("Trilha nula");
         }
 
         LOG.info("Preparando para listar os módulos da trilha: " + trilha.getNome());
@@ -121,7 +121,7 @@ public class ModuloService {
 
         if (modulos == null) {
             LOG.error("Não foram encontrados módulos da trilha " + trilha.getNome() + "!");
-            throw new RuntimeException("Não há módulos da trilha informada");
+            throw new EntityNotFoundException("Não há módulos da trilha informada");
         }
 
         LOG.info("Número de módulos encontrados: " + modulos.size());

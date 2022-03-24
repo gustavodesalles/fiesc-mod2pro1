@@ -1,7 +1,7 @@
-package habilitpro.model.dao;
+package habilitpro.model.dao.empresa;
 
 import habilitpro.model.enums.EnumTipoEmpresa;
-import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.empresa.Empresa;
 import javax.persistence.EntityManager;
 
 import java.util.List;

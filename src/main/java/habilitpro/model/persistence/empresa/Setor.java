@@ -1,6 +1,6 @@
-package habilitpro.model.persistence.trabalhador;
+package habilitpro.model.persistence.empresa;
 
-import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.empresa.Empresa;
 import javax.persistence.*;
 
 @Entity

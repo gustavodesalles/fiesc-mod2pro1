@@ -31,12 +31,12 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nome, String cpf, String email, String senha, ArrayList<Perfil> perfis) {
+    public Usuario(String nome, String cpf, String email, String senha) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.senha = senha;
-        this.perfis = perfis;
+        this.perfis = new ArrayList<Perfil>();
     }
 
     public long getId() {

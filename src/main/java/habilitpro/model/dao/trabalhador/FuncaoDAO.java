@@ -1,7 +1,7 @@
 package habilitpro.model.dao.trabalhador;
 
 import habilitpro.model.persistence.trabalhador.Funcao;
-import habilitpro.model.persistence.trabalhador.Setor;
+import habilitpro.model.persistence.empresa.Setor;
 import javax.persistence.EntityManager;
 
 import java.util.List;
@@ -21,6 +21,10 @@ public class FuncaoDAO {
         entityManager.remove(funcao);
     }
 
+    public Funcao update(Funcao funcao) {
+        return entityManager.merge(funcao);
+    }
+
     public Funcao getById(long id) {
         return entityManager.find(Funcao.class, id);
     }
@@ -28,6 +32,12 @@ public class FuncaoDAO {
     public Funcao findByName(String name) {
         String sql = "SELECT * FROM Funcao WHERE name =:name";
         return (Funcao) this.entityManager.createNativeQuery(sql, Funcao.class).setParameter("name",name).getSingleResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Funcao> listAll() {
+        String sql = "SELECT * FROM Funcao";
+        return entityManager.createNativeQuery(sql, Funcao.class).getResultList();
     }
 
     @SuppressWarnings("unchecked")

@@ -1,7 +1,7 @@
-package habilitpro.model.dao.trabalhador;
+package habilitpro.model.dao.empresa;
 
-import habilitpro.model.persistence.Empresa;
-import habilitpro.model.persistence.trabalhador.Setor;
+import habilitpro.model.persistence.empresa.Empresa;
+import habilitpro.model.persistence.empresa.Setor;
 import javax.persistence.EntityManager;
 
 import java.util.List;
@@ -21,6 +21,10 @@ public class SetorDAO {
         entityManager.remove(setor);
     }
 
+    public Setor update(Setor setor) {
+        return entityManager.merge(setor);
+    }
+
     public Setor getById(long id) {
         return entityManager.find(Setor.class, id);
     }
@@ -28,6 +32,12 @@ public class SetorDAO {
     public Setor findByName(String name) {
         String sql = "SELECT * FROM Setor WHERE name =:name";
         return (Setor) this.entityManager.createNativeQuery(sql, Setor.class).setParameter("name",name).getSingleResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Setor> listAll() {
+        String sql = "SELECT * FROM Setor";
+        return entityManager.createNativeQuery(sql, Setor.class).getResultList();
     }
 
     @SuppressWarnings("unchecked")

@@ -1,14 +1,14 @@
-package habilitpro.services;
+package habilitpro.services.empresa;
 
-import habilitpro.model.dao.EmpresaDAO;
+import habilitpro.model.dao.empresa.EmpresaDAO;
 import habilitpro.model.enums.EnumTipoEmpresa;
-import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.empresa.Empresa;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EmpresaService {
@@ -69,15 +69,16 @@ public class EmpresaService {
     }
 
     public void delete(Long id) {
-        LOG.info("Preparando para encontrar a empresa.");
-
         if (id == null) {
             LOG.error("O ID da empresa está nulo!");
             throw new RuntimeException("ID nulo");
         }
 
+        LOG.info("Preparando para encontrar a empresa.");
+
         Empresa empresa = empresaDAO.getById(id);
         validateIfNull(empresa);
+        LOG.info("Empresa encontrada!");
 
         beginTransaction();
         empresaDAO.delete(empresa);
@@ -91,6 +92,7 @@ public class EmpresaService {
             throw new RuntimeException("Parâmetro nulo");
         }
 
+        LOG.info("Preparando para encontrar a empresa.");
         Empresa empresa = empresaDAO.getById(id);
         validateIfNull(empresa);
         LOG.info("Empresa encontrada!");
@@ -106,6 +108,23 @@ public class EmpresaService {
         empresa.setRegionalSenai(novaEmpresa.getRegionalSenai());
         commitAndCloseTransaction();
         LOG.info("Empresa atualizada com sucesso!");
+    }
+
+    public Empresa getById(Long id) {
+        if (id == null) {
+            LOG.error("O ID da empresa está nulo!");
+            throw new RuntimeException("ID nulo");
+        }
+
+        Empresa empresa = empresaDAO.getById(id);
+
+        if (empresa == null) {
+            LOG.error("Empresa não encontrada!");
+            throw new RuntimeException("Empresa nula");
+        }
+
+        LOG.info("Empresa encontrada!");
+        return empresa;
     }
 
     public List<Empresa> listAll() {

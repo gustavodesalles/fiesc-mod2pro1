@@ -1,7 +1,7 @@
 package habilitpro.services.trilha;
 
 import habilitpro.model.dao.trilha.TrilhaDAO;
-import habilitpro.model.persistence.Empresa;
+import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.trilha.Ocupacao;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.EntityManager;
@@ -30,9 +30,9 @@ public class TrilhaService {
         validateIfNull(trilha);
 
         Empresa empresa = trilha.getEmpresa();
-        long ocupacaoId = trilha.getOcupacao().getId();
+        String ocupacaoNome = trilha.getOcupacao().getNome();
         LOG.info("Buscando ocupação.");
-        Ocupacao ocupacao = ocupacaoService.getById(ocupacaoId);
+        Ocupacao ocupacao = ocupacaoService.findByNome(ocupacaoNome);
         if (ocupacao != null) {
             trilha.setOcupacao(ocupacao);
         }
@@ -57,15 +57,16 @@ public class TrilhaService {
     }
 
     public void delete(Long id) {
-        LOG.info("Preparando para encontrar a trilha.");
-
         if (id == null) {
             LOG.error("O ID da trilha está nulo!");
             throw new RuntimeException("ID nulo");
         }
 
+        LOG.info("Preparando para encontrar a trilha.");
+
         Trilha trilha = trilhaDAO.getById(id);
         validateIfNull(trilha);
+        LOG.info("Trilha encontrada!");
 
         beginTransaction();
         trilhaDAO.delete(trilha);
@@ -79,6 +80,7 @@ public class TrilhaService {
             throw new RuntimeException("Parâmetro nulo");
         }
 
+        LOG.info("Preparando para encontrar a trilha.");
         Trilha trilha = trilhaDAO.getById(id);
         validateIfNull(trilha);
         LOG.info("Trilha encontrada!");
@@ -93,6 +95,23 @@ public class TrilhaService {
         trilha.setTrabalhadores(novaTrilha.getTrabalhadores());
         commitAndCloseTransaction();
         LOG.info("Trilha atualizada com sucesso!");
+    }
+
+    public Trilha getById(Long id) {
+        if (id == null) {
+            LOG.error("O ID da trilha está nulo!");
+            throw new RuntimeException("ID nulo");
+        }
+
+        Trilha trilha = trilhaDAO.getById(id);
+
+        if (trilha == null) {
+            LOG.error("Trilha não encontrada!");
+            throw new RuntimeException("Trilha nula");
+        }
+
+        LOG.info("Trilha encontrada!");
+        return trilha;
     }
 
     public List<Trilha> listAll() {

@@ -1,5 +1,7 @@
 package habilitpro.model.persistence.trabalhador;
 
+import habilitpro.model.persistence.empresa.Setor;
+
 import javax.persistence.*;
 
 @Entity

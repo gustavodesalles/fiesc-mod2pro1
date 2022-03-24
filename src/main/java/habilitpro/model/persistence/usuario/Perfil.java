@@ -2,7 +2,6 @@ package habilitpro.model.persistence.usuario;
 
 import javax.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,12 +32,20 @@ public class Perfil {
         this.id = id;
     }
 
-    public String getnome() {
+    public String getNome() {
         return nome;
     }
 
-    public void setnome(String nome) {
+    public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public List<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 
     @Override

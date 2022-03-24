@@ -4,15 +4,11 @@ import habilitpro.connection.JpaConnectionFactory;
 import habilitpro.model.enums.EnumRegionalEmpresa;
 import habilitpro.model.enums.EnumSegmentoEmpresa;
 import habilitpro.model.enums.EnumTipoEmpresa;
-import habilitpro.model.persistence.Empresa;
-import habilitpro.model.persistence.trabalhador.Trabalhador;
-import habilitpro.model.persistence.trilha.Ocupacao;
-import habilitpro.model.persistence.trilha.Trilha;
+import habilitpro.model.persistence.empresa.Empresa;
+
 import javax.persistence.EntityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
 
 public class Main {
     public static final Logger LOG = LogManager.getLogger(Main.class);
