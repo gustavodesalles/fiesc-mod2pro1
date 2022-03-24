@@ -1,6 +1,8 @@
 package habilitpro.model.dao.trabalhador;
 
 import habilitpro.model.persistence.trabalhador.Trabalhador;
+import habilitpro.model.persistence.trilha.Trilha;
+
 import javax.persistence.EntityManager;
 
 import java.util.List;
@@ -37,8 +39,8 @@ public class TrabalhadorDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Trabalhador> listByFunction(String funcao) {
-        String sql = "SELECT * FROM Trabalhador WHERE funcao =: funcao";
-        return entityManager.createNativeQuery(sql, Trabalhador.class).setParameter("funcao", funcao).getResultList();
+    public List<Trabalhador> listByTrilha(Trilha trilha) {
+        String sql = "SELECT * FROM Trabalhador WHERE trilha_id =" + trilha.getId();
+        return entityManager.createNativeQuery(sql, Trabalhador.class).setParameter("trilha_id", trilha.getId()).getResultList();
     }
 }

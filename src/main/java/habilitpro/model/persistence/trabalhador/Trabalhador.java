@@ -1,6 +1,7 @@
 package habilitpro.model.persistence.trabalhador;
 
 import habilitpro.model.persistence.empresa.Empresa;
+import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.*;
@@ -25,11 +26,13 @@ public class Trabalhador {
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
-    @Column(nullable = false)
-    private String setor;
+    @ManyToOne
+    @JoinColumn(name = "setor_id")
+    private Setor setor;
 
-    @Column(nullable = false)
-    private String funcao;
+    @ManyToOne
+    @JoinColumn(name = "funcao_id")
+    private Funcao funcao;
 
     private LocalDate dataUltimaAlter;
 
@@ -42,13 +45,13 @@ public class Trabalhador {
     public Trabalhador() {
     }
 
-    public Trabalhador(String nome, String cpf, Empresa empresa, String setor, String funcao, LocalDate dataUltimaAlter) {
+    public Trabalhador(String nome, String cpf, Empresa empresa, Setor setor, Funcao funcao) {
         this.nome = nome;
         this.cpf = cpf;
         this.empresa = empresa;
         this.setor = setor;
         this.funcao = funcao;
-        this.dataUltimaAlter = dataUltimaAlter;
+        this.dataUltimaAlter = null;
         this.trilhas = new ArrayList<Trilha>();
         this.modulosComAv = new ArrayList<AvaliacaoModulo>();
     }
@@ -85,19 +88,19 @@ public class Trabalhador {
         this.empresa = empresa;
     }
 
-    public String getSetor() {
+    public Setor getSetor() {
         return setor;
     }
 
-    public void setSetor(String setor) {
+    public void setSetor(Setor setor) {
         this.setor = setor;
     }
 
-    public String getFuncao() {
+    public Funcao getFuncao() {
         return funcao;
     }
 
-    public void setFuncao(String funcao) {
+    public void setFuncao(Funcao funcao) {
         this.funcao = funcao;
     }
 
@@ -113,7 +116,7 @@ public class Trabalhador {
         return trilhas;
     }
 
-    public void setTrilhas(ArrayList<Trilha> trilhas) {
+    public void setTrilhas(List<Trilha> trilhas) {
         this.trilhas = trilhas;
     }
 
@@ -121,7 +124,7 @@ public class Trabalhador {
         return modulosComAv;
     }
 
-    public void setModulosComAv(ArrayList<AvaliacaoModulo> modulosComAv) {
+    public void setModulosComAv(List<AvaliacaoModulo> modulosComAv) {
         this.modulosComAv = modulosComAv;
     }
 }

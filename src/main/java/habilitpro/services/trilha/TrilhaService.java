@@ -2,10 +2,13 @@ package habilitpro.services.trilha;
 
 import habilitpro.model.dao.trilha.TrilhaDAO;
 import habilitpro.model.persistence.empresa.Empresa;
+import habilitpro.model.persistence.trabalhador.Trabalhador;
 import habilitpro.model.persistence.trilha.Ocupacao;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 
+import habilitpro.services.trabalhador.TrabalhadorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,11 +20,13 @@ public class TrilhaService {
     private EntityManager entityManager;
     private TrilhaDAO trilhaDAO;
     private OcupacaoService ocupacaoService;
+    private TrabalhadorService trabalhadorService;
 
-    public TrilhaService(EntityManager entityManager, TrilhaDAO trilhaDAO, OcupacaoService ocupacaoService) {
+    public TrilhaService(EntityManager entityManager, TrilhaDAO trilhaDAO, OcupacaoService ocupacaoService, TrabalhadorService trabalhadorService) {
         this.entityManager = entityManager;
         this.trilhaDAO = trilhaDAO;
         this.ocupacaoService = ocupacaoService;
+        this.trabalhadorService = trabalhadorService;
     }
 
     public void create(Trilha trilha) {
@@ -64,7 +69,7 @@ public class TrilhaService {
 
         LOG.info("Preparando para encontrar a trilha.");
 
-        Trilha trilha = trilhaDAO.getById(id);
+        Trilha trilha = getById(id);
         validateIfNull(trilha);
         LOG.info("Trilha encontrada!");
 
@@ -77,13 +82,12 @@ public class TrilhaService {
     public void update(Trilha novaTrilha, Long id) {
         if (novaTrilha == null || id == null) {
             LOG.error("Um dos parâmetros está nulo!");
-            throw new RuntimeException("Parâmetro nulo");
+            throw new EntityNotFoundException("Parâmetro nulo");
         }
 
         LOG.info("Preparando para encontrar a trilha.");
-        Trilha trilha = trilhaDAO.getById(id);
+        Trilha trilha = getById(id);
         validateIfNull(trilha);
-        LOG.info("Trilha encontrada!");
 
         beginTransaction();
         trilha.setEmpresa(novaTrilha.getEmpresa());
@@ -145,11 +149,8 @@ public class TrilhaService {
         return trilhas;
     }
 
-    private void validateIfNull(Trilha trilha) {
-        if (trilha == null) {
-            LOG.error("A trilha não existe!");
-            throw new RuntimeException("Trilha nula");
-        }
+    public void addTrabalhador(Trilha trilha, Trabalhador trabalhador) {
+
     }
 
     private String criarNome(Empresa empresa, Ocupacao ocupacao) {
@@ -173,6 +174,13 @@ public class TrilhaService {
             }
         }
         return numSeq;
+    }
+
+    private void validateIfNull(Trilha trilha) {
+        if (trilha == null) {
+            LOG.error("A trilha não existe!");
+            throw new RuntimeException("Trilha nula");
+        }
     }
 
     private void beginTransaction() {

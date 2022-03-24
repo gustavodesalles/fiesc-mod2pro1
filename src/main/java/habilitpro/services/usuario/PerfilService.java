@@ -1,6 +1,7 @@
 package habilitpro.services.usuario;
 
 import habilitpro.model.dao.usuario.PerfilDAO;
+import habilitpro.model.dao.usuario.UsuarioDAO;
 import habilitpro.model.persistence.usuario.Perfil;
 import habilitpro.model.persistence.usuario.Usuario;
 import org.apache.logging.log4j.LogManager;
@@ -14,10 +15,12 @@ public class PerfilService {
     private static final Logger LOG = LogManager.getLogger(PerfilService.class);
     private EntityManager entityManager;
     private PerfilDAO perfilDAO;
+    private UsuarioService usuarioService;
 
-    public PerfilService(EntityManager entityManager, PerfilDAO perfilDAO) {
+    public PerfilService(EntityManager entityManager, PerfilDAO perfilDAO, UsuarioService usuarioService) {
         this.entityManager = entityManager;
         this.perfilDAO = perfilDAO;
+        this.usuarioService = usuarioService;
     }
 
     public void create(Perfil perfil) {
@@ -104,6 +107,7 @@ public class PerfilService {
 
         beginTransaction();
         perfil.getUsuarios().add(usuario);
+        usuarioService.addPerfil(usuario, perfil);
         commitAndCloseTransaction();
         LOG.info("Usuário adicionado com sucesso!");
     }
@@ -120,6 +124,7 @@ public class PerfilService {
 
         beginTransaction();
         perfil.getUsuarios().remove(usuario);
+        usuarioService.removePerfil(usuario, perfil);
         commitAndCloseTransaction();
         LOG.info("Usuário removido com sucesso!");
     }

@@ -13,10 +13,12 @@ public class UsuarioService {
     private static final Logger LOG = LogManager.getLogger(UsuarioService.class);
     private EntityManager entityManager;
     private UsuarioDAO usuarioDAO;
+    private PerfilService perfilService;
 
-    public UsuarioService(EntityManager entityManager, UsuarioDAO usuarioDAO) {
+    public UsuarioService(EntityManager entityManager, UsuarioDAO usuarioDAO, PerfilService perfilService) {
         this.entityManager = entityManager;
         this.usuarioDAO = usuarioDAO;
+        this.perfilService = perfilService;
     }
 
     public void create(Usuario usuario) {
@@ -37,7 +39,7 @@ public class UsuarioService {
         }
 
         String usuarioEmail = usuario.getEmail();
-        if (!regexEmail(usuarioEmail)) {
+        if (!checkEmail(usuarioEmail)) {
             LOG.error("O e-mail do usuário é inválido!");
             throw new RuntimeException("E-mail inválido");
         }
@@ -112,7 +114,7 @@ public class UsuarioService {
         return (digv1 == resto1 && digv2 == resto2);
     }
 
-    public static boolean regexEmail(String email) {
+    public static boolean checkEmail(String email) {
         String rePattern = "(.+)@(.+)\\.(.+)";
         return email.matches(rePattern);
     }
@@ -141,6 +143,7 @@ public class UsuarioService {
 
             beginTransaction();
             usuario.getPerfis().add(perfil);
+            perfilService.addUsuario(perfil, usuario);
             commitAndCloseTransaction();
             LOG.info("Perfil adicionado com sucesso!");
         }
@@ -159,6 +162,7 @@ public class UsuarioService {
 
             beginTransaction();
             usuario.getPerfis().remove(perfil);
+            perfilService.removeUsuario(perfil, usuario);
             commitAndCloseTransaction();
             LOG.info("Perfil removido com sucesso!");
         }
