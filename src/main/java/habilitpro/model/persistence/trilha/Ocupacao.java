@@ -15,7 +15,7 @@ public class Ocupacao {
     }
 
     public Ocupacao(String nome) {
-        this.nome = nome;
+        this.nome = nome.toUpperCase();
     }
 
     public long getId() {

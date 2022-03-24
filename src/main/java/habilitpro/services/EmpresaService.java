@@ -82,7 +82,7 @@ public class EmpresaService {
         beginTransaction();
         empresaDAO.delete(empresa);
         commitAndCloseTransaction();
-        LOG.info("Empresa deletada!");
+        LOG.info("Empresa deletada com sucesso!");
     }
 
     public void update(Empresa novaEmpresa, Long id) {

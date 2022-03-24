@@ -36,6 +36,7 @@ public class Trabalhador {
     @ManyToMany(mappedBy = "trabalhadores")
     private List<Trilha> trilhas;
 
+    @OneToMany(mappedBy = "trabalhador")
     private List<AvaliacaoModulo> modulosComAv;
 
     public Trabalhador() {

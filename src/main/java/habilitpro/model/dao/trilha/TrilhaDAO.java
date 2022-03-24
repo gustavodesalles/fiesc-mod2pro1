@@ -1,5 +1,6 @@
 package habilitpro.model.dao.trilha;
 
+import habilitpro.model.persistence.Empresa;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.EntityManager;
 
@@ -34,8 +35,8 @@ public class TrilhaDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Trilha> listByName(String name) {
-        String sql = "SELECT * FROM Trilha WHERE name =: name";
-        return entityManager.createNativeQuery(sql, Trilha.class).setParameter("name", name).getResultList();
+    public List<Trilha> listByEmpresa(Empresa empresa) {
+        String sql = "SELECT * FROM Trilha WHERE empresa_id = " + empresa.getId();
+        return entityManager.createNativeQuery(sql, Trilha.class).setParameter("empresa_id", empresa.getId()).getResultList();
     }
 }

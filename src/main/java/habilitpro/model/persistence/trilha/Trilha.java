@@ -17,7 +17,8 @@ public class Trilha {
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "ocupacao_id")
     private Ocupacao ocupacao;
 
     @Column(nullable = false)
@@ -30,18 +31,16 @@ public class Trilha {
     private String anotacoes;
 
     @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "trilha_id"),
-    inverseJoinColumns = @JoinColumn(name = "trabalhador_id"))
     private List<Trabalhador> trabalhadores;
 
     public Trilha() {
     }
 
-    public Trilha(Empresa empresa, Ocupacao ocupacao, /*String nome, String apelido,*/ int nivelSatisfacao, String anotacoes, ArrayList<Trabalhador> trabalhadores) {
+    public Trilha(Empresa empresa, Ocupacao ocupacao, int nivelSatisfacao, String anotacoes, ArrayList<Trabalhador> trabalhadores) {
         this.empresa = empresa;
         this.ocupacao = ocupacao;
-        //this.nome = nome;
-        //this.apelido = apelido;
+        this.nome = "";
+        this.apelido = "";
         this.nivelSatisfacao = nivelSatisfacao;
         this.anotacoes = anotacoes;
         this.trabalhadores = trabalhadores;
@@ -107,7 +106,7 @@ public class Trilha {
         return trabalhadores;
     }
 
-    public void setTrabalhadores(ArrayList<Trabalhador> trabalhadores) {
+    public void setTrabalhadores(List<Trabalhador> trabalhadores) {
         this.trabalhadores = trabalhadores;
     }
 
