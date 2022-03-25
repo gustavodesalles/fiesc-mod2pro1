@@ -39,7 +39,7 @@ public class EmpresaDAO {
 
     @SuppressWarnings("unchecked")
     public List<Empresa> listByTipo(EnumTipoEmpresa tipoEmpresa) {
-        String sql = "SELECT * FROM Empresa WHERE tipoEmpresa =: tipoEmpresa";
-        return entityManager.createNativeQuery(sql, Empresa.class).setParameter("tipoEmpresa", tipoEmpresa).getResultList();
+        String sql = "SELECT * FROM Empresa WHERE tipoEmpresa =:tipoEmpresa";
+        return entityManager.createNativeQuery(sql, Empresa.class).setParameter("tipoEmpresa", tipoEmpresa.getNome()).getResultList();
     }
 }

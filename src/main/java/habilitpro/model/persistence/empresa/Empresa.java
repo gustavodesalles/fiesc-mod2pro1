@@ -41,13 +41,13 @@ public class Empresa {
     }
 
     public Empresa(String nome, String cnpj, EnumTipoEmpresa tipoEmpresa, String nomeFilial, EnumSegmentoEmpresa segmento, String cidade, String estado, EnumRegionalEmpresa regionalSenai) {
-        this.nome = nome;
+        this.nome = nome.toUpperCase();
         this.cnpj = cnpj;
         this.tipoEmpresa = tipoEmpresa;
-        this.nomeFilial = nomeFilial;
+        this.nomeFilial = nomeFilial.toUpperCase();
         this.segmento = segmento;
-        this.cidade = cidade;
-        this.estado = estado;
+        this.cidade = cidade.toUpperCase();
+        this.estado = estado.toUpperCase();
         this.regionalSenai = regionalSenai;
     }
 
@@ -135,7 +135,7 @@ public class Empresa {
         sb.append(", cidade='").append(cidade).append('\'');
         sb.append(", estado='").append(estado).append('\'');
         sb.append(", regionalSenai='").append(regionalSenai);
-        sb.append('}');
+        sb.append("'}");
         return sb.toString();
     }
 }

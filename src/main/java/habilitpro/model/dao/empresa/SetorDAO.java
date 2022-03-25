@@ -29,9 +29,9 @@ public class SetorDAO {
         return entityManager.find(Setor.class, id);
     }
 
-    public Setor findByName(String name) {
-        String sql = "SELECT * FROM Setor WHERE name =:name";
-        return (Setor) this.entityManager.createNativeQuery(sql, Setor.class).setParameter("name",name).getSingleResult();
+    public Setor findByName(String nome) {
+        String sql = "SELECT * FROM Setor WHERE nome =:nome";
+        return (Setor) this.entityManager.createNativeQuery(sql, Setor.class).setParameter("nome", nome).getSingleResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -42,7 +42,7 @@ public class SetorDAO {
 
     @SuppressWarnings("unchecked")
     public List<Setor> listByEmpresa(Empresa empresa) {
-        String sql = "SELECT * FROM Setor WHERE empresa =: empresa";
-        return entityManager.createNativeQuery(sql, Setor.class).setParameter("empresa", empresa).getResultList();
+        String sql = "SELECT * FROM Setor WHERE empresa_id =:empresa_id";
+        return entityManager.createNativeQuery(sql, Setor.class).setParameter("empresa_id", empresa.getId()).getResultList();
     }
 }

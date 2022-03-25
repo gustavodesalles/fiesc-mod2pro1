@@ -1,6 +1,9 @@
 package habilitpro.model.persistence.empresa;
 
 import habilitpro.model.persistence.empresa.Empresa;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -21,7 +24,7 @@ public class Setor {
 
     public Setor(Empresa empresa, String nome) {
         this.empresa = empresa;
-        this.nome = nome;
+        this.nome = nome.toUpperCase();
     }
 
     public long getId() {

@@ -7,6 +7,14 @@ public enum EnumTipoEmpresa {
     private String nome;
 
     EnumTipoEmpresa(String nome) {
+        this.nome = nome.toUpperCase();
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
         this.nome = nome;
     }
 

@@ -1,7 +1,6 @@
 package habilitpro.model.persistence.trabalhador;
 
 import habilitpro.model.persistence.empresa.Empresa;
-import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.*;
@@ -27,10 +26,6 @@ public class Trabalhador {
     private Empresa empresa;
 
     @ManyToOne
-    @JoinColumn(name = "setor_id")
-    private Setor setor;
-
-    @ManyToOne
     @JoinColumn(name = "funcao_id")
     private Funcao funcao;
 
@@ -45,11 +40,10 @@ public class Trabalhador {
     public Trabalhador() {
     }
 
-    public Trabalhador(String nome, String cpf, Empresa empresa, Setor setor, Funcao funcao) {
+    public Trabalhador(String nome, String cpf, Empresa empresa, Funcao funcao) {
         this.nome = nome;
         this.cpf = cpf;
         this.empresa = empresa;
-        this.setor = setor;
         this.funcao = funcao;
         this.dataUltimaAlter = null;
         this.trilhas = new ArrayList<Trilha>();
@@ -86,14 +80,6 @@ public class Trabalhador {
 
     public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
-    }
-
-    public Setor getSetor() {
-        return setor;
-    }
-
-    public void setSetor(Setor setor) {
-        this.setor = setor;
     }
 
     public Funcao getFuncao() {

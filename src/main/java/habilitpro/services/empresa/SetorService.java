@@ -16,9 +16,9 @@ public class SetorService {
     private EntityManager entityManager;
     private SetorDAO setorDAO;
 
-    public SetorService(EntityManager entityManager, SetorDAO setorDAO) {
+    public SetorService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.setorDAO = setorDAO;
+        this.setorDAO = new SetorDAO(entityManager);
     }
 
     public void create(Setor setor) {
@@ -38,8 +38,19 @@ public class SetorService {
             throw new RuntimeException("Nome nulo");
         }
 
+        LOG.info("Buscando setor " + setorNome);
+        Setor setor1 = findByName(setorNome);
+        if (setor1 != null) {
+            LOG.error("Este setor já existe!");
+            throw new RuntimeException("Setor já existe");
+        }
+
         beginTransaction();
-        setorDAO.create(setor);
+        try {
+            setorDAO.create(setor);
+        } catch (Exception e) {
+            LOG.error("Erro ao criar o setor, causado por: " + e.getMessage());
+        }
         commitAndCloseTransaction();
         LOG.info("Setor criado com sucesso!");
     }
@@ -52,7 +63,7 @@ public class SetorService {
 
         LOG.info("Preparando para encontrar o setor.");
 
-        Setor setor = setorDAO.getById(id);
+        Setor setor = getById(id);
         validateIfNull(setor);
         LOG.info("Setor encontrado!");
 
@@ -69,7 +80,7 @@ public class SetorService {
         }
 
         LOG.info("Preparando para encontrar o setor.");
-        Setor setor = setorDAO.getById(id);
+        Setor setor = getById(id);
         validateIfNull(setor);
         LOG.info("Setor encontrado!");
 
@@ -104,7 +115,7 @@ public class SetorService {
         }
 
         try {
-            Setor setor = this.setorDAO.findByName(name.toLowerCase());
+            Setor setor = setorDAO.findByName(name);
             return setor;
         } catch (NoResultException n) {
             this.LOG.error("Setor não encontrado.");
@@ -145,7 +156,7 @@ public class SetorService {
 
     private void validateIfNull(Setor setor) {
         if (setor == null) {
-            this.LOG.error("O setor não existe!");
+            LOG.error("O setor não existe!");
             throw new EntityNotFoundException("Setor nulo");
         }
     }

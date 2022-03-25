@@ -50,12 +50,6 @@ public class TrabalhadorService {
             throw new EntityNotFoundException("Empresa nula");
         }
 
-        Setor setor = trabalhador.getSetor();
-        if (setor == null) {
-            LOG.error("O setor está nulo!");
-            throw new EntityNotFoundException("Setor nulo");
-        }
-
         Funcao funcao = trabalhador.getFuncao();
         if (funcao == null) {
             LOG.error("A função está nula!");
@@ -98,7 +92,6 @@ public class TrabalhadorService {
         trabalhador.setNome(novoTrab.getNome());
         trabalhador.setCpf(novoTrab.getCpf());
         trabalhador.setEmpresa(novoTrab.getEmpresa());
-        trabalhador.setSetor(novoTrab.getSetor());
         trabalhador.setFuncao(novoTrab.getFuncao());
         trabalhador.setDataUltimaAlter(LocalDate.now());
         trabalhador.setTrilhas(novoTrab.getTrilhas());
