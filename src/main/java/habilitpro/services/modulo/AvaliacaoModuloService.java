@@ -15,9 +15,9 @@ public class AvaliacaoModuloService {
     private EntityManager entityManager;
     private AvaliacaoModuloDAO avaliacaoModuloDAO;
 
-    public AvaliacaoModuloService(EntityManager entityManager, AvaliacaoModuloDAO avaliacaoModuloDAO) {
+    public AvaliacaoModuloService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.avaliacaoModuloDAO = avaliacaoModuloDAO;
+        this.avaliacaoModuloDAO = new AvaliacaoModuloDAO(entityManager);
     }
 
     public void create(AvaliacaoModulo avaliacaoModulo) {

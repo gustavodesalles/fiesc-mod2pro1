@@ -16,9 +16,9 @@ public class FuncaoService {
     private EntityManager entityManager;
     private FuncaoDAO funcaoDAO;
 
-    public FuncaoService(EntityManager entityManager, FuncaoDAO funcaoDAO) {
+    public FuncaoService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.funcaoDAO = funcaoDAO;
+        this.funcaoDAO = new FuncaoDAO(entityManager);
     }
 
     public void create(Funcao funcao) {

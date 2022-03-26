@@ -14,8 +14,14 @@ import habilitpro.model.persistence.trilha.Ocupacao;
 import habilitpro.model.persistence.trilha.Trilha;
 import habilitpro.services.empresa.EmpresaService;
 import habilitpro.services.empresa.SetorService;
+import habilitpro.services.modulo.AvaliacaoModuloService;
+import habilitpro.services.modulo.ModuloService;
+import habilitpro.services.trabalhador.FuncaoService;
+import habilitpro.services.trabalhador.TrabalhadorService;
 import habilitpro.services.trilha.OcupacaoService;
 import habilitpro.services.trilha.TrilhaService;
+import habilitpro.services.usuario.PerfilService;
+import habilitpro.services.usuario.UsuarioService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,13 +37,19 @@ public class Main {
         SetorService setorService = new SetorService(entityManager);
         TrilhaService trilhaService = new TrilhaService(entityManager);
         OcupacaoService ocupacaoService = new OcupacaoService(entityManager);
+        ModuloService moduloService = new ModuloService(entityManager);
+        AvaliacaoModuloService avaliacaoModuloService = new AvaliacaoModuloService(entityManager);
+        TrabalhadorService trabalhadorService = new TrabalhadorService(entityManager);
+        FuncaoService funcaoService = new FuncaoService(entityManager);
+        UsuarioService usuarioService = new UsuarioService(entityManager);
+        PerfilService perfilService = new PerfilService(entityManager);
 
         LOG.info("Boas vindas.");
 
         // Testes de empresa
 
-        //Empresa empresa = new Empresa("aBbA", "16.169.773/0001-36", EnumTipoEmpresa.MATRIZ, "d", EnumSegmentoEmpresa.ALIB, "Belém", "Pa", EnumRegionalEmpresa.VIM);
-        //Empresa empresa = new Empresa("ceb", "96644218000158", EnumTipoEmpresa.FILIAL, "d", EnumSegmentoEmpresa.ALIB, "aNANINDEUA", "pA", EnumRegionalEmpresa.VIM);
+        Empresa empresa = new Empresa("aBbA", "16.169.773/0001-36", EnumTipoEmpresa.MATRIZ, "d", EnumSegmentoEmpresa.ALIB, "Belém", "Pa", EnumRegionalEmpresa.VIM);
+        Empresa empresa1 = new Empresa("ceb", "96644218000158", EnumTipoEmpresa.FILIAL, "d", EnumSegmentoEmpresa.ALIB, "aNANINDEUA", "pA", EnumRegionalEmpresa.VIM);
         //empresaService.create(empresa);
         //empresaService.update(empresa, 5L);
         //empresaService.delete(4L);

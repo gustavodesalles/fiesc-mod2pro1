@@ -16,12 +16,10 @@ public class PerfilService {
     private static final Logger LOG = LogManager.getLogger(PerfilService.class);
     private EntityManager entityManager;
     private PerfilDAO perfilDAO;
-    private UsuarioService usuarioService;
 
-    public PerfilService(EntityManager entityManager, PerfilDAO perfilDAO, UsuarioService usuarioService) {
+    public PerfilService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.perfilDAO = perfilDAO;
-        this.usuarioService = usuarioService;
+        this.perfilDAO = new PerfilDAO(entityManager);
     }
 
     public void create(Perfil perfil) {

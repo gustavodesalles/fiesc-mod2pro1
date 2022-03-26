@@ -14,12 +14,10 @@ public class UsuarioService {
     private static final Logger LOG = LogManager.getLogger(UsuarioService.class);
     private EntityManager entityManager;
     private UsuarioDAO usuarioDAO;
-    private PerfilService perfilService;
 
-    public UsuarioService(EntityManager entityManager, UsuarioDAO usuarioDAO, PerfilService perfilService) {
+    public UsuarioService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.usuarioDAO = usuarioDAO;
-        this.perfilService = perfilService;
+        this.usuarioDAO = new UsuarioDAO(entityManager);
     }
 
     public void create(Usuario usuario) {
@@ -162,7 +160,7 @@ public class UsuarioService {
             try {
                 beginTransaction();
                 usuario.getPerfis().remove(perfil);
-                perfilService.removeUsuario(perfil, usuario);
+                perfil.getUsuarios().remove(usuario);
                 commitAndCloseTransaction();
                 LOG.info("Perfil removido com sucesso!");
             } catch (Exception e) {
