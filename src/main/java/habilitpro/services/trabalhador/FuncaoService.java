@@ -3,11 +3,11 @@ package habilitpro.services.trabalhador;
 import habilitpro.model.dao.trabalhador.FuncaoDAO;
 import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.trabalhador.Funcao;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import java.util.List;
 
@@ -22,44 +22,54 @@ public class FuncaoService {
     }
 
     public void create(Funcao funcao) {
-        validateIfNull(funcao);
+        Validar.validarFuncao(funcao);
 
         LOG.info("Preparando para criar a função.");
 
-        String funcaoNome = funcao.getNome();
-        if (funcaoNome == null || funcaoNome.isBlank()) {
-            LOG.error("O nome da função está nulo!");
-            throw new RuntimeException("Nome nulo");
+        String nome = funcao.getNome();
+        Validar.validarString(nome);
+
+        Setor setor = funcao.getSetor();
+        Validar.validarSetor(setor);
+
+        LOG.info("Buscando setor " + nome);
+        Funcao funcao1 = findByName(nome);
+        if (funcao1 != null && funcao1.getSetor().getNome().equals(funcao.getSetor().getNome())) {
+            LOG.error("Esta função já existe!");
+            throw new RuntimeException("Função já existe");
         }
 
-        Setor funcaoSetor = funcao.getSetor();
-        if (funcaoSetor == null) {
-            LOG.error("O setor da função está nulo!");
-            throw new EntityNotFoundException("Setor nulo");
+        try {
+            beginTransaction();
+            funcaoDAO.create(funcao);
+            commitAndCloseTransaction();
+            LOG.info("Função criada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao criar a função, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-
-        beginTransaction();
-        funcaoDAO.create(funcao);
-        commitAndCloseTransaction();
-        LOG.info("Função criada com sucesso!");
     }
 
     public void delete(Long id) {
-        if (id == null) {
-            LOG.error("O ID da função está nulo!");
-            throw new RuntimeException("ID nulo");
-        }
+        Validar.validarId(id);
 
         LOG.info("Preparando para encontrar a função.");
 
-        Funcao funcao = funcaoDAO.getById(id);
-        validateIfNull(funcao);
-        LOG.info("Função encontrada!");
+        Funcao funcao = getById(id);
 
-        beginTransaction();
-        funcaoDAO.delete(funcao);
-        commitAndCloseTransaction();
-        LOG.info("Função deletada com sucesso!");
+        if (funcaoDAO.checkIfTrabalhador(funcao)) {
+            LOG.error("A função ainda possui trabalhadores; delete-os antes de deletar a função.");
+            throw new RuntimeException("Função possui trabalhadores");
+        }
+
+        try {
+            beginTransaction();
+            funcaoDAO.delete(funcao);
+            commitAndCloseTransaction();
+            LOG.info("Função deletada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar a função, causado por: " + e.getMessage());
+        }
     }
 
     public void update(Funcao novaFuncao, Long id) {
@@ -69,22 +79,33 @@ public class FuncaoService {
         }
 
         LOG.info("Preparando para encontrar a função.");
-        Funcao funcao = funcaoDAO.getById(id);
-        validateIfNull(funcao);
-        LOG.info("Função encontrada!");
+        Funcao funcao = getById(id);
 
-        beginTransaction();
-        funcao.setNome(novaFuncao.getNome());
-        funcao.setSetor(novaFuncao.getSetor());
-        commitAndCloseTransaction();
-        LOG.info("Função atualizada com sucesso!");
+        try {
+            beginTransaction();
+            funcao.setNome(novaFuncao.getNome());
+            funcao.setSetor(novaFuncao.getSetor());
+            commitAndCloseTransaction();
+            LOG.info("Função atualizada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar a função, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Funcao getById(Long id) {
+        Validar.validarId(id);
+
+        Funcao funcao = funcaoDAO.getById(id);
+
+        Validar.validarFuncao(funcao);
+
+        LOG.info("Função encontrada!");
+        return funcao;
     }
 
     public Funcao findByName(String name) {
-        if (name == null || name.isEmpty()) {
-            LOG.error("O nome da função está nulo!");
-            throw new RuntimeException("Nome nulo");
-        }
+        Validar.validarString(name);
 
         try {
             Funcao funcao = this.funcaoDAO.findByName(name.toLowerCase());
@@ -119,13 +140,6 @@ public class FuncaoService {
 
         LOG.info("Número de funções encontradas: " + funcoes.size());
         return funcoes;
-    }
-
-    private void validateIfNull(Funcao funcao) {
-        if (funcao == null) {
-            this.LOG.error("A função não existe!");
-            throw new EntityNotFoundException("Função nula");
-        }
     }
 
     private void beginTransaction() {

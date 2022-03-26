@@ -1,12 +1,17 @@
 package habilitpro.services.empresa;
 
 import habilitpro.model.dao.empresa.EmpresaDAO;
+import habilitpro.model.dao.empresa.SetorDAO;
+import habilitpro.model.dao.trabalhador.FuncaoDAO;
+import habilitpro.model.dao.trilha.TrilhaDAO;
 import habilitpro.model.enums.EnumTipoEmpresa;
 import habilitpro.model.persistence.empresa.Empresa;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
 import habilitpro.model.persistence.empresa.Setor;
+import habilitpro.model.persistence.trabalhador.Funcao;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,30 +21,28 @@ public class EmpresaService {
     private static final Logger LOG = LogManager.getLogger(EmpresaService.class);
     private EntityManager entityManager;
     private EmpresaDAO empresaDAO;
-    private SetorService setorService;
 
     public EmpresaService(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.empresaDAO = new EmpresaDAO(entityManager);
-        this.setorService = new SetorService(entityManager);
     }
 
     public void create(Empresa empresa) {
         LOG.info("Preparando para criar uma empresa.");
 
-        validateIfNull(empresa);
+        Validar.validarEmpresa(empresa);
 
-        validarNome(empresa.getNome());
-        
-        empresa.setCnpj(validarCnpj(empresa.getCnpj()));
+        Validar.validarString(empresa.getNome());
 
-        validarFilial(empresa);
+        empresa.setCnpj(Validar.validarCnpj(empresa.getCnpj()));
+
+        Validar.validarFilial(empresa);
 
         String cidade = empresa.getCidade();
-        validarCidade(cidade);
+        Validar.validarString(cidade);
 
         String estado = empresa.getEstado();
-        validarEstado(estado);
+        Validar.validarEstado(estado);
 
         try {
             empresa.setNome(empresa.getNome().toUpperCase());
@@ -55,44 +58,6 @@ public class EmpresaService {
         LOG.info("Empresa criada com sucesso!");
     }
 
-    private void validarFilial(Empresa empresa) {
-        if (empresa.getTipoEmpresa().equals(EnumTipoEmpresa.MATRIZ)) {
-            empresa.setNomeFilial("");
-        }
-    }
-
-    private void validarEstado(String estado) {
-        if (estado.isBlank() || estado == null) {
-            LOG.error("O nome do estado está nulo!");
-            throw new RuntimeException("Estado nulo");
-        } else if (estado.length() > 2) {
-            LOG.error("O nome do estado é inválido!");
-            throw new RuntimeException("Estado inválido");
-        }
-    }
-
-    private void validarCidade(String cidade) {
-        if (cidade.isBlank() || cidade == null) {
-            LOG.error("O nome da cidade está nulo!");
-            throw new RuntimeException("Cidade nula");
-        }
-    }
-
-    private String validarCnpj(String cnpj) {
-        if (!checkCnpj(cnpj)) {
-            LOG.error("O CNPJ é inválido!");
-            throw new RuntimeException("CNPJ inválido");
-        }
-        return regexCnpj(cnpj);
-    }
-
-    private void validarNome(String nome) {
-        if (nome == null || nome.isBlank()) {
-            LOG.error("O nome da empresa está nulo!");
-            throw new RuntimeException("Nome nulo");
-        }
-    }
-
     public void delete(Long id) {
         if (id == null) {
             LOG.error("O ID da empresa está nulo!");
@@ -102,18 +67,33 @@ public class EmpresaService {
         LOG.info("Preparando para encontrar a empresa.");
 
         Empresa empresa = empresaDAO.getById(id);
-        validateIfNull(empresa);
+        Validar.validarEmpresa(empresa);
         LOG.info("Empresa encontrada!");
 
-        beginTransaction();
+        if (empresaDAO.checkIfSetor(empresa)) {
+            LOG.error("A empresa ainda possui setores; por favor, delete-os antes de deletar a empresa.");
+            throw new RuntimeException("Empresa possui setores");
+        }
+
+        if (empresaDAO.checkIfTrabalhador(empresa)) {
+            LOG.error("A empresa ainda possui trabalhadores; por favor, delete-os antes de deletar a empresa.");
+            throw new RuntimeException("Empresa possui trabalhadores");
+        }
+
+        if (empresaDAO.checkIfTrilha(empresa)) {
+            LOG.error("A empresa ainda possui trilhas; por favor, delete-as antes de deletar a empresa.");
+            throw new RuntimeException("Empresa possui trilhas");
+        }
+
         try {
+            beginTransaction();
             empresaDAO.delete(empresa);
+            commitAndCloseTransaction();
+            LOG.info("Empresa deletada com sucesso!");
         } catch (Exception e) {
             LOG.error("Erro ao deletar a empresa, causado por: " + e.getMessage());
             throw new RuntimeException(e);
         }
-        commitAndCloseTransaction();
-        LOG.info("Empresa deletada com sucesso!");
     }
 
     public void update(Empresa novaEmpresa, Long id) {
@@ -124,22 +104,22 @@ public class EmpresaService {
 
         LOG.info("Preparando para encontrar a empresa.");
         Empresa empresa = empresaDAO.getById(id);
-        validateIfNull(empresa);
+        Validar.validarEmpresa(empresa);
         LOG.info("Empresa encontrada!");
 
-        validateIfNull(novaEmpresa);
+        Validar.validarEmpresa(novaEmpresa);
 
-        validarNome(novaEmpresa.getNome());
+        Validar.validarString(novaEmpresa.getNome());
 
-        novaEmpresa.setCnpj(validarCnpj(novaEmpresa.getCnpj()));
+        novaEmpresa.setCnpj(Validar.validarCnpj(novaEmpresa.getCnpj()));
 
-        validarFilial(novaEmpresa);
+        Validar.validarFilial(novaEmpresa);
 
         String cidade = novaEmpresa.getCidade();
-        validarCidade(cidade);
+        Validar.validarString(cidade);
 
         String estado = novaEmpresa.getEstado();
-        validarEstado(estado);
+        Validar.validarEstado(estado);
 
         beginTransaction();
         empresa.setNome(novaEmpresa.getNome());
@@ -200,70 +180,6 @@ public class EmpresaService {
 
         LOG.info("Número de empresas encontradas: " + empresas.size());
         return empresas;
-    }
-
-    public String regexCnpj(String cnpj) {
-        return cnpj.replaceAll("\\.|-|/","");
-    }
-
-    public boolean checkCnpj(String cnpj) {
-        cnpj = regexCnpj(cnpj);
-        System.out.println(cnpj);
-        int digv1 = Character.getNumericValue(cnpj.charAt(12));
-        int digv2 = Character.getNumericValue(cnpj.charAt(13));
-        int mult1, mult2, soma = 0, resto1 = 0, resto2 = 0;
-
-        //verificar o primeiro dígito
-        mult1 = 5;
-        mult2 = 9;
-
-        for (int i = 0; i < 4; ++i) {
-            int digito = Character.getNumericValue(cnpj.charAt(i));
-            soma += digito * mult1;
-            --mult1;
-        }
-        for (int i = 0; i < 8; ++i) {
-            int digito = Character.getNumericValue(cnpj.charAt(i+4));
-            soma += digito * mult2;
-            --mult2;
-        }
-
-        if (((soma) % 11) < 2) {
-            resto1 = 0;
-        } else {
-            resto1 = 11 - ((soma) % 11);
-        }
-
-        //verificar o segundo dígito
-        soma = 0;
-        mult1 = 6;
-        mult2 = 9;
-
-        for (int i = 0; i < 5; ++i) {
-            int digito = Character.getNumericValue(cnpj.charAt(i));
-            soma += digito * mult1;
-            --mult1;
-        }
-        for (int i = 0; i < 8; ++i) {
-            int digito = Character.getNumericValue(cnpj.charAt(i+5));
-            soma += digito * mult2;
-            --mult2;
-        }
-
-        if (((soma) % 11) < 2) {
-            resto2 = 0;
-        } else {
-            resto2 = 11 - ((soma) % 11);
-        }
-
-        return (digv1 == resto1 && digv2 == resto2);
-    }
-
-    private void validateIfNull(Empresa empresa) {
-        if (empresa == null) {
-            this.LOG.error("A empresa não existe!");
-            throw new EntityNotFoundException("Empresa nula");
-        }
     }
 
     private void beginTransaction() {

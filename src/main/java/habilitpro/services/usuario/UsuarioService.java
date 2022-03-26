@@ -143,7 +143,7 @@ public class UsuarioService {
 
             beginTransaction();
             usuario.getPerfis().add(perfil);
-            perfilService.addUsuario(perfil, usuario);
+            perfil.getUsuarios().add(usuario);
             commitAndCloseTransaction();
             LOG.info("Perfil adicionado com sucesso!");
         }

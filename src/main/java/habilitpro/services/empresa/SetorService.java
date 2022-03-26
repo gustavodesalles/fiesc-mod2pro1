@@ -3,6 +3,7 @@ package habilitpro.services.empresa;
 import habilitpro.model.dao.empresa.SetorDAO;
 import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.empresa.Setor;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,24 +23,18 @@ public class SetorService {
     }
 
     public void create(Setor setor) {
-        validateIfNull(setor);
+        Validar.validarSetor(setor);
 
         LOG.info("Preparando para criar o setor.");
 
         Empresa empresa = setor.getEmpresa();
-        if (empresa == null) {
-            LOG.error("A empresa está nula!");
-            throw new EntityNotFoundException("Empresa nula");
-        }
+        Validar.validarEmpresa(empresa);
 
-        String setorNome = setor.getNome();
-        if (setorNome.isBlank() || setorNome == null) {
-            LOG.error("O nome do setor está nulo!");
-            throw new RuntimeException("Nome nulo");
-        }
+        String nome = setor.getNome();
+        Validar.validarString(nome);
 
-        LOG.info("Buscando setor " + setorNome);
-        Setor setor1 = findByName(setorNome);
+        LOG.info("Buscando setor " + nome);
+        Setor setor1 = findByName(nome);
         if (setor1 != null) {
             LOG.error("Este setor já existe!");
             throw new RuntimeException("Setor já existe");
@@ -64,13 +59,21 @@ public class SetorService {
         LOG.info("Preparando para encontrar o setor.");
 
         Setor setor = getById(id);
-        validateIfNull(setor);
-        LOG.info("Setor encontrado!");
 
-        beginTransaction();
-        setorDAO.delete(setor);
-        commitAndCloseTransaction();
-        LOG.info("Setor deletado com sucesso!");
+        if (setorDAO.checkIfFuncao(setor)) {
+            LOG.error("O setor ainda possui funções; delete-as antes de deletar o setor.");
+            throw new RuntimeException("Setor possui funções");
+        }
+
+        try {
+            beginTransaction();
+            setorDAO.delete(setor);
+            commitAndCloseTransaction();
+            LOG.info("Setor deletado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar o setor, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void update(Setor novoSetor, Long id) {
@@ -81,7 +84,7 @@ public class SetorService {
 
         LOG.info("Preparando para encontrar o setor.");
         Setor setor = getById(id);
-        validateIfNull(setor);
+        Validar.validarSetor(setor);
         LOG.info("Setor encontrado!");
 
         beginTransaction();
@@ -99,10 +102,7 @@ public class SetorService {
 
         Setor setor = setorDAO.getById(id);
 
-        if (setor == null) {
-            LOG.error("Setor não encontrado!");
-            throw new RuntimeException("Setor nulo");
-        }
+        Validar.validarSetor(setor);
 
         LOG.info("Setor encontrado!");
         return setor;
@@ -137,10 +137,7 @@ public class SetorService {
     }
 
     public List<Setor> listByEmpresa(Empresa empresa) {
-        if (empresa == null) {
-            LOG.error("A empresa está nula!");
-            throw new EntityNotFoundException("Empresa nula");
-        }
+        Validar.validarEmpresa(empresa);
 
         LOG.info("Preparando para listar os setores da empresa: " + empresa.getNome());
         List<Setor> setores = setorDAO.listByEmpresa(empresa);
@@ -152,13 +149,6 @@ public class SetorService {
 
         LOG.info("Número de setores encontrados: " + setores.size());
         return setores;
-    }
-
-    private void validateIfNull(Setor setor) {
-        if (setor == null) {
-            LOG.error("O setor não existe!");
-            throw new EntityNotFoundException("Setor nulo");
-        }
     }
 
     private void beginTransaction() {

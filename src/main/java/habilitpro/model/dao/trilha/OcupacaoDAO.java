@@ -30,7 +30,7 @@ public class OcupacaoDAO {
     }
 
     public Ocupacao findByNome(String nome) {
-        String sql = "SELECT * FROM Ocupacao WHERE nome =: nome";
+        String sql = "SELECT * FROM Ocupacao WHERE nome =:nome";
         return (Ocupacao) entityManager.createNativeQuery(sql, Ocupacao.class).setParameter("nome", nome).getSingleResult();
     }
 
@@ -42,7 +42,7 @@ public class OcupacaoDAO {
 
     @SuppressWarnings("unchecked")
     public List<Ocupacao> listByTrilha(Trilha trilha) {
-        String sql = "SELECT * FROM Ocupacao WHERE trilha =: trilha";
-        return entityManager.createNativeQuery(sql, Ocupacao.class).setParameter("trilha", trilha).getResultList();
+        String sql = "SELECT * FROM Ocupacao WHERE trilha_id =:trilha_id";
+        return entityManager.createNativeQuery(sql, Ocupacao.class).setParameter("trilha_id", trilha.getId()).getResultList();
     }
 }

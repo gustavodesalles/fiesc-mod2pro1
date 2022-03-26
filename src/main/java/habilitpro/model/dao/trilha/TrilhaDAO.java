@@ -36,7 +36,7 @@ public class TrilhaDAO {
 
     @SuppressWarnings("unchecked")
     public List<Trilha> listByEmpresa(Empresa empresa) {
-        String sql = "SELECT * FROM Trilha WHERE empresa_id = " + empresa.getId();
+        String sql = "SELECT * FROM Trilha WHERE empresa_id =:empresa_id";
         return entityManager.createNativeQuery(sql, Trilha.class).setParameter("empresa_id", empresa.getId()).getResultList();
     }
 }

@@ -22,11 +22,11 @@ public class TrilhaService {
     private OcupacaoService ocupacaoService;
     private TrabalhadorService trabalhadorService;
 
-    public TrilhaService(EntityManager entityManager, TrilhaDAO trilhaDAO, OcupacaoService ocupacaoService, TrabalhadorService trabalhadorService) {
+    public TrilhaService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.trilhaDAO = trilhaDAO;
-        this.ocupacaoService = ocupacaoService;
-        this.trabalhadorService = trabalhadorService;
+        this.trilhaDAO = new TrilhaDAO(entityManager);
+        this.ocupacaoService = new OcupacaoService(entityManager);
+        this.trabalhadorService = new TrabalhadorService(entityManager);
     }
 
     public void create(Trilha trilha) {
@@ -35,21 +35,19 @@ public class TrilhaService {
         validateIfNull(trilha);
 
         Empresa empresa = trilha.getEmpresa();
-        String ocupacaoNome = trilha.getOcupacao().getNome();
-        LOG.info("Buscando ocupação.");
-        Ocupacao ocupacao = ocupacaoService.findByNome(ocupacaoNome);
-        if (ocupacao != null) {
-            trilha.setOcupacao(ocupacao);
+        validarEmpresa(empresa);
+
+        Ocupacao ocupacao = trilha.getOcupacao();
+        if (validarOcupacao(ocupacao) != null) {
+            trilha.setOcupacao(validarOcupacao(ocupacao));
         }
 
-        if (trilha.getNivelSatisfacao() > 5 || trilha.getNivelSatisfacao() < 1) {
-            LOG.error("O nível de satisfação não é válido!");
-            throw new RuntimeException("Nível de satisfação inválido");
-        }
+        int satisfacao = trilha.getNivelSatisfacao();
+        validarSatisfacao(satisfacao);
 
         try {
-            trilha.setNome(criarNome(empresa, ocupacao));
-            trilha.setApelido(criarApelido(empresa, ocupacao));
+            trilha.setNome(criarNome(empresa, ocupacao).toUpperCase());
+            trilha.setApelido(criarApelido(empresa, ocupacao).toUpperCase());
 
             beginTransaction();
             trilhaDAO.create(trilha);
@@ -62,10 +60,7 @@ public class TrilhaService {
     }
 
     public void delete(Long id) {
-        if (id == null) {
-            LOG.error("O ID da trilha está nulo!");
-            throw new RuntimeException("ID nulo");
-        }
+        validarId(id);
 
         LOG.info("Preparando para encontrar a trilha.");
 
@@ -89,23 +84,29 @@ public class TrilhaService {
         Trilha trilha = getById(id);
         validateIfNull(trilha);
 
-        beginTransaction();
-        trilha.setEmpresa(novaTrilha.getEmpresa());
-        trilha.setOcupacao(novaTrilha.getOcupacao());
-        trilha.setNome(criarNome(novaTrilha.getEmpresa(), novaTrilha.getOcupacao()));
-        trilha.setApelido(criarApelido(novaTrilha.getEmpresa(), novaTrilha.getOcupacao()));
-        trilha.setNivelSatisfacao(novaTrilha.getNivelSatisfacao());
-        trilha.setAnotacoes(novaTrilha.getAnotacoes());
-        trilha.setTrabalhadores(novaTrilha.getTrabalhadores());
-        commitAndCloseTransaction();
-        LOG.info("Trilha atualizada com sucesso!");
+        validarEmpresa(novaTrilha.getEmpresa());
+        validarOcupacao(novaTrilha.getOcupacao());
+        validarSatisfacao(novaTrilha.getNivelSatisfacao());
+
+        try {
+            beginTransaction();
+            trilha.setEmpresa(novaTrilha.getEmpresa());
+            trilha.setOcupacao(novaTrilha.getOcupacao());
+            trilha.setNome(criarNome(novaTrilha.getEmpresa(), novaTrilha.getOcupacao()));
+            trilha.setApelido(criarApelido(novaTrilha.getEmpresa(), novaTrilha.getOcupacao()));
+            trilha.setNivelSatisfacao(novaTrilha.getNivelSatisfacao());
+            trilha.setAnotacoes(novaTrilha.getAnotacoes());
+            trilha.setTrabalhadores(novaTrilha.getTrabalhadores());
+            commitAndCloseTransaction();
+            LOG.info("Trilha atualizada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar a trilha, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public Trilha getById(Long id) {
-        if (id == null) {
-            LOG.error("O ID da trilha está nulo!");
-            throw new RuntimeException("ID nulo");
-        }
+        validarId(id);
 
         Trilha trilha = trilhaDAO.getById(id);
 
@@ -132,10 +133,7 @@ public class TrilhaService {
     }
 
     public List<Trilha> listByEmpresa(Empresa empresa) {
-        if (empresa == null) {
-            LOG.error("A empresa está nula!");
-            throw new RuntimeException("Empresa nula");
-        }
+        validarEmpresa(empresa);
 
         LOG.info("Preparando para buscar as trilhas da empresa: " + empresa.getNome());
         List<Trilha> trilhas = trilhaDAO.listByEmpresa(empresa);
@@ -150,7 +148,19 @@ public class TrilhaService {
     }
 
     public void addTrabalhador(Trilha trilha, Trabalhador trabalhador) {
+        validateIfNull(trilha);
 
+        validarTrabalhador(trabalhador);
+
+        try {
+            beginTransaction();
+            trilha.getTrabalhadores().add(trabalhador);
+            trabalhador.getTrilhas().add(trilha);
+            commitAndCloseTransaction();
+        } catch (Exception e) {
+            LOG.error("Erro ao adicionar o trabalhador, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     private String criarNome(Empresa empresa, Ocupacao ocupacao) {
@@ -169,7 +179,7 @@ public class TrilhaService {
         List<Trilha> trilhas = trilhaDAO.listByEmpresa(empresa);
 
         for (Trilha t : trilhas) {
-            if (t.getOcupacao().equals(ocupacao)) {
+            if (t.getOcupacao().getNome().equals(ocupacao.getNome())) {
                 numSeq++;
             }
         }
@@ -180,6 +190,45 @@ public class TrilhaService {
         if (trilha == null) {
             LOG.error("A trilha não existe!");
             throw new RuntimeException("Trilha nula");
+        }
+    }
+
+    private void validarEmpresa(Empresa empresa) {
+        if (empresa == null) {
+            LOG.error("A empresa não existe!");
+            throw new EntityNotFoundException("Empresa nula");
+        }
+    }
+
+    private void validarSatisfacao(int satisfacao) {
+        if (satisfacao > 5 || satisfacao < 1) {
+            LOG.error("O nível de satisfação não é válido!");
+            throw new RuntimeException("Nível de satisfação inválido");
+        }
+    }
+
+    private Ocupacao validarOcupacao(Ocupacao ocupacao) {
+        if (ocupacao == null) {
+            LOG.error("A ocupação está nula!");
+            throw new EntityNotFoundException("Ocupação nula");
+        }
+
+        String ocupacaoNome = ocupacao.getNome();
+        LOG.info("Buscando ocupação.");
+        return ocupacaoService.findByNome(ocupacaoNome);
+    }
+
+    private void validarId(Long id) {
+        if (id == null) {
+            LOG.error("O ID da trilha está nulo!");
+            throw new RuntimeException("ID nulo");
+        }
+    }
+
+    private void validarTrabalhador(Trabalhador trabalhador) {
+        if (trabalhador == null) {
+            LOG.error("O trabalhador não existe!");
+            throw new EntityNotFoundException("Trabalhador nulo");
         }
     }
 

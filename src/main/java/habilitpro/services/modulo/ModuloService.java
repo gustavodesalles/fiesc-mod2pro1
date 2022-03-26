@@ -1,9 +1,11 @@
 package habilitpro.services.modulo;
 
+import habilitpro.model.dao.modulo.AvaliacaoModuloDAO;
 import habilitpro.model.dao.modulo.ModuloDAO;
 import habilitpro.model.enums.EnumStatusModulo;
 import habilitpro.model.persistence.modulo.Modulo;
 import habilitpro.model.persistence.trilha.Trilha;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,27 +17,32 @@ public class ModuloService {
     private static final Logger LOG = LogManager.getLogger(ModuloService.class);
     private EntityManager entityManager;
     private ModuloDAO moduloDAO;
+    private AvaliacaoModuloDAO avaliacaoModuloDAO;
 
-    public ModuloService(EntityManager entityManager, ModuloDAO moduloDAO) {
+    public ModuloService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.moduloDAO = moduloDAO;
+        this.moduloDAO = new ModuloDAO(entityManager);
+        this.avaliacaoModuloDAO = new AvaliacaoModuloDAO(entityManager);
     }
 
     public void create(Modulo modulo) {
         LOG.info("Preparando para criar um módulo.");
 
-        validateIfNull(modulo);
+        Validar.validarModulo(modulo);
 
-        String nome = modulo.getNome();
-        if (nome == null || nome.isBlank()) {
-            LOG.error("O nome do módulo está nulo!");
-            throw new EntityNotFoundException("Nome nulo");
+        Validar.validarTrilha(modulo.getTrilha());
+
+        Validar.validarString(modulo.getNome());
+
+        try {
+            beginTransaction();
+            moduloDAO.create(modulo);
+            commitAndCloseTransaction();
+            LOG.info("Módulo criado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao criar o módulo, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-
-        beginTransaction();
-        moduloDAO.create(modulo);
-        commitAndCloseTransaction();
-        LOG.info("Módulo criado com sucesso!");
     }
 
     public void delete(Long id) {
@@ -46,13 +53,22 @@ public class ModuloService {
             throw new EntityNotFoundException("ID nulo");
         }
 
-        Modulo modulo = moduloDAO.getById(id);
-        validateIfNull(modulo);
+        Modulo modulo = getById(id);
 
-        beginTransaction();
-        moduloDAO.delete(modulo);
-        commitAndCloseTransaction();
-        LOG.info("Módulo deletado com sucesso!");
+        if (moduloDAO.checkIfAvaliacaoModulo(modulo)) {
+            LOG.error("O módulo ainda possui avaliações; delete-as antes de deletar o módulo.");
+            throw new RuntimeException("Módulo possui avaliações");
+        }
+
+        try {
+            beginTransaction();
+            moduloDAO.delete(modulo);
+            commitAndCloseTransaction();
+            LOG.info("Módulo deletado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar o módulo, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void update(Modulo novoModulo, Long id) {
@@ -61,22 +77,40 @@ public class ModuloService {
             throw new EntityNotFoundException("Parâmetro nulo");
         }
 
-        Modulo modulo = moduloDAO.getById(id);
-        validateIfNull(modulo);
-        LOG.info("Módulo encontrado!");
+        Modulo modulo = getById(id);
 
-        beginTransaction();
-        modulo.setTrilha(novoModulo.getTrilha());
-        modulo.setNome(novoModulo.getNome());
-        modulo.setHabilidades(novoModulo.getHabilidades());
-        modulo.setTarefa(novoModulo.getTarefa());
-        modulo.setDataInicio(novoModulo.getDataInicio());
-        modulo.setDataFim(novoModulo.getDataFim());
-        modulo.setDataPrazo(novoModulo.getDataPrazo());
-        modulo.setPrazoLimite(novoModulo.getPrazoLimite());
-        modulo.setStatus(novoModulo.getStatus());
-        commitAndCloseTransaction();
-        LOG.info("Módulo atualizado com sucesso!");
+        Validar.validarTrilha(novoModulo.getTrilha());
+
+        Validar.validarString(novoModulo.getNome());
+
+        try {
+            beginTransaction();
+            modulo.setTrilha(novoModulo.getTrilha());
+            modulo.setNome(novoModulo.getNome());
+            modulo.setHabilidades(novoModulo.getHabilidades());
+            modulo.setTarefa(novoModulo.getTarefa());
+            modulo.setDataInicio(novoModulo.getDataInicio());
+            modulo.setDataFim(novoModulo.getDataFim());
+            modulo.setDataPrazo(novoModulo.getDataPrazo());
+            modulo.setPrazoLimite(novoModulo.getPrazoLimite());
+            modulo.setStatus(novoModulo.getStatus());
+            commitAndCloseTransaction();
+            LOG.info("Módulo atualizado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar o módulo, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Modulo getById(Long id) {
+        Validar.validarId(id);
+
+        Modulo modulo = moduloDAO.getById(id);
+
+        Validar.validarModulo(modulo);
+
+        LOG.info("Módulo encontrado!");
+        return modulo;
     }
 
     public List<Modulo> listAll() {
@@ -111,10 +145,7 @@ public class ModuloService {
     }
 
     public List<Modulo> listByTrilha(Trilha trilha) {
-        if (trilha == null) {
-            LOG.error("A trilha está nula!");
-            throw new EntityNotFoundException("Trilha nula");
-        }
+        Validar.validarTrilha(trilha);
 
         LOG.info("Preparando para listar os módulos da trilha: " + trilha.getNome());
         List<Modulo> modulos = moduloDAO.listByTrilha(trilha);
@@ -126,13 +157,6 @@ public class ModuloService {
 
         LOG.info("Número de módulos encontrados: " + modulos.size());
         return modulos;
-    }
-
-    private void validateIfNull(Modulo modulo) {
-        if (modulo == null) {
-            this.LOG.error("O módulo não existe!");
-            throw new EntityNotFoundException("Módulo nulo");
-        }
     }
 
     private void beginTransaction() {

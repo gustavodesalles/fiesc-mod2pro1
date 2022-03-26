@@ -107,7 +107,7 @@ public class PerfilService {
 
         beginTransaction();
         perfil.getUsuarios().add(usuario);
-        usuarioService.addPerfil(usuario, perfil);
+        usuario.getPerfis().add(perfil);
         commitAndCloseTransaction();
         LOG.info("Usuário adicionado com sucesso!");
     }
@@ -124,7 +124,7 @@ public class PerfilService {
 
         beginTransaction();
         perfil.getUsuarios().remove(usuario);
-        usuarioService.removePerfil(usuario, perfil);
+        usuario.getPerfis().remove(perfil);
         commitAndCloseTransaction();
         LOG.info("Usuário removido com sucesso!");
     }

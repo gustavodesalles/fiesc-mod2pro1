@@ -1,12 +1,13 @@
 package habilitpro.services.trabalhador;
 
+import habilitpro.model.dao.modulo.AvaliacaoModuloDAO;
 import habilitpro.model.dao.trabalhador.TrabalhadorDAO;
 import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.trabalhador.Funcao;
 import habilitpro.model.persistence.trabalhador.Trabalhador;
 import habilitpro.model.persistence.trilha.Trilha;
-import habilitpro.services.trilha.TrilhaService;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,47 +20,40 @@ public class TrabalhadorService {
     private static final Logger LOG = LogManager.getLogger(TrabalhadorService.class);
     private EntityManager entityManager;
     private TrabalhadorDAO trabalhadorDAO;
-    private TrilhaService trilhaService;
+    private AvaliacaoModuloDAO avaliacaoModuloDAO;
 
-    public TrabalhadorService(EntityManager entityManager, TrabalhadorDAO trabalhadorDAO, TrilhaService trilhaService) {
+    public TrabalhadorService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.trabalhadorDAO = trabalhadorDAO;
-        this.trilhaService = trilhaService;
+        this.trabalhadorDAO = new TrabalhadorDAO(entityManager);
+        this.avaliacaoModuloDAO = new AvaliacaoModuloDAO(entityManager);
     }
 
     public void create(Trabalhador trabalhador) {
-        validateIfNull(trabalhador);
+        Validar.validarTrabalhador(trabalhador);
 
         LOG.info("Preparando para criar o trabalhador.");
 
         String nome = trabalhador.getNome();
-        if (nome == null || nome.isBlank()) {
-            LOG.error("O nome do trabalhador está nulo!");
-            throw new RuntimeException("Nome nulo");
-        }
+        Validar.validarString(nome);
 
         String cpf = trabalhador.getCpf();
-        if (!checkCpf(cpf)) {
-            LOG.error("O CPF do trabalhador é inválido!");
-            throw new RuntimeException("CPF inválido");
-        }
+        Validar.validarCpf(cpf);
 
         Empresa empresa = trabalhador.getEmpresa();
-        if (empresa == null) {
-            LOG.error("A empresa está nula!");
-            throw new EntityNotFoundException("Empresa nula");
-        }
+        Validar.validarEmpresa(empresa);
 
         Funcao funcao = trabalhador.getFuncao();
-        if (funcao == null) {
-            LOG.error("A função está nula!");
-            throw new EntityNotFoundException("Função nula");
-        }
+        Validar.validarFuncao(funcao);
 
-        beginTransaction();
-        trabalhadorDAO.create(trabalhador);
-        commitAndCloseTransaction();
-        LOG.info("Trabalhador criado com sucesso!");
+        try {
+            beginTransaction();
+            trabalhadorDAO.create(trabalhador);
+            commitAndCloseTransaction();
+            LOG.info("Trabalhador criado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao criar o trabalhador, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void delete(Long id) {
@@ -70,12 +64,21 @@ public class TrabalhadorService {
 
         LOG.info("Preparando para encontrar o trabalhador.");
         Trabalhador trabalhador = getById(id);
-        validateIfNull(trabalhador);
 
-        beginTransaction();
-        trabalhadorDAO.delete(trabalhador);
-        commitAndCloseTransaction();
-        LOG.info("Trabalhador deletado com sucesso!");
+        if (trabalhadorDAO.checkIfAvaliacaoModulo(trabalhador)) {
+            LOG.error("O trabalhador ainda possui avaliações; delete-as antes de deletar o trabalhador.");
+            throw new RuntimeException("Trabalhador possui avaliações");
+        }
+
+        try {
+            beginTransaction();
+            trabalhadorDAO.delete(trabalhador);
+            commitAndCloseTransaction();
+            LOG.info("Trabalhador deletado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar o trabalhador, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void update(Trabalhador novoTrab, Long id) {
@@ -86,18 +89,27 @@ public class TrabalhadorService {
 
         LOG.info("Preparando para encontrar o trabalhador.");
         Trabalhador trabalhador = getById(id);
-        validateIfNull(trabalhador);
 
-        beginTransaction();
-        trabalhador.setNome(novoTrab.getNome());
-        trabalhador.setCpf(novoTrab.getCpf());
-        trabalhador.setEmpresa(novoTrab.getEmpresa());
-        trabalhador.setFuncao(novoTrab.getFuncao());
-        trabalhador.setDataUltimaAlter(LocalDate.now());
-        trabalhador.setTrilhas(novoTrab.getTrilhas());
-        trabalhador.setModulosComAv(novoTrab.getModulosComAv());
-        commitAndCloseTransaction();
-        LOG.info("Trabalhador atualizado com sucesso!");
+        Validar.validarString(novoTrab.getNome());
+        Validar.validarCpf(novoTrab.getCpf());
+        Validar.validarEmpresa(novoTrab.getEmpresa());
+        Validar.validarFuncao(novoTrab.getFuncao());
+
+        try {
+            beginTransaction();
+            trabalhador.setNome(novoTrab.getNome());
+            trabalhador.setCpf(novoTrab.getCpf());
+            trabalhador.setEmpresa(novoTrab.getEmpresa());
+            trabalhador.setFuncao(novoTrab.getFuncao());
+            trabalhador.setDataUltimaAlter(LocalDate.now());
+            trabalhador.setTrilhas(novoTrab.getTrilhas());
+            trabalhador.setModulosComAv(novoTrab.getModulosComAv());
+            commitAndCloseTransaction();
+            LOG.info("Trabalhador atualizado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar o trabalhador, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public List<Trabalhador> listAll() {
@@ -113,18 +125,15 @@ public class TrabalhadorService {
         return trabalhadores;
     }
 
-    public List<Trabalhador> listByTrilha(Trilha trilha) {
-        if (trilha == null) {
-            LOG.error("A trilha está nula!");
-            throw new EntityNotFoundException("Trilha nula");
-        }
+    public List<Trabalhador> listByFuncao(Funcao funcao) {
+        Validar.validarFuncao(funcao);
 
-        LOG.info("Preparando para listar os trabalhadores na trilha: " + trilha.getNome());
-        List<Trabalhador> trabalhadores = trabalhadorDAO.listByTrilha(trilha);
+        LOG.info("Preparando para listar os trabalhadores com a função: " + funcao.getNome());
+        List<Trabalhador> trabalhadores = trabalhadorDAO.listByFuncao(funcao);
 
         if (trabalhadores == null) {
-            LOG.info("Não foram encontrados trabalhadores na trilha " + trilha.getNome() + "!");
-            throw new EntityNotFoundException("Não há trabalhadores na trilha informada");
+            LOG.info("Não foram encontrados trabalhadores com a função " + funcao.getNome() + "!");
+            throw new EntityNotFoundException("Não há trabalhadores com a função informada");
         }
 
         LOG.info("Número de trabalhadores encontrados: " + trabalhadores.size());
@@ -132,17 +141,11 @@ public class TrabalhadorService {
     }
 
     public Trabalhador getById(Long id) {
-        if (id == null) {
-            LOG.error("O ID do trabalhador está nulo!");
-            throw new RuntimeException("ID nulo");
-        }
+        Validar.validarId(id);
 
         Trabalhador trabalhador = trabalhadorDAO.getById(id);
 
-        if (trabalhador == null) {
-            LOG.error("Trabalhador não encontrado!");
-            throw new EntityNotFoundException("Trabalhador nulo");
-        }
+        Validar.validarTrabalhador(trabalhador);
 
         LOG.info("Trabalhador encontrado!");
         return trabalhador;

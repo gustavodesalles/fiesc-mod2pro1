@@ -1,7 +1,9 @@
 package habilitpro.model.dao.modulo;
 
 import habilitpro.model.enums.EnumStatusModulo;
+import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import habilitpro.model.persistence.modulo.Modulo;
+import habilitpro.model.persistence.trabalhador.Trabalhador;
 import habilitpro.model.persistence.trilha.Trilha;
 
 import javax.persistence.EntityManager;
@@ -28,6 +30,11 @@ public class ModuloDAO {
 
     public Modulo getById(long id) {
         return entityManager.find(Modulo.class, id);
+    }
+
+    public boolean checkIfAvaliacaoModulo(Modulo modulo) {
+        String sql = "SELECT * FROM AvaliacaoModulo WHERE modulo_id =:modulo_id";
+        return (entityManager.createNativeQuery(sql, AvaliacaoModulo.class).setParameter("modulo_id", modulo.getId()).getResultList().size() > 0);
     }
 
     @SuppressWarnings("unchecked")

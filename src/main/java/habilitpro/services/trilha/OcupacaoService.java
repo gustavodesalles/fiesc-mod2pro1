@@ -3,6 +3,7 @@ package habilitpro.services.trilha;
 import habilitpro.model.dao.trilha.OcupacaoDAO;
 import habilitpro.model.persistence.trilha.Ocupacao;
 import habilitpro.model.persistence.trilha.Trilha;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,13 +16,40 @@ public class OcupacaoService {
     private EntityManager entityManager;
     private OcupacaoDAO ocupacaoDAO;
 
-    public OcupacaoService(EntityManager entityManager, OcupacaoDAO ocupacaoDAO) {
+    public OcupacaoService(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.ocupacaoDAO = ocupacaoDAO;
+        this.ocupacaoDAO = new OcupacaoDAO(entityManager);
     }
 
-    //A criação da classe Ocupação já é validada no método create da classe TrilhaService
-    // e a sua deleção causaria problemas na tabela de trilhas, então omite-se ambos os métodos.
+    public void create(Ocupacao ocupacao) {
+        validateIfNull(ocupacao);
+
+        Validar.validarString(ocupacao.getNome());
+
+        try {
+            beginTransaction();
+            ocupacaoDAO.create(ocupacao);
+            commitAndCloseTransaction();
+            LOG.info("Ocupação criada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao criar a ocupação, causado por: " + e.getMessage());
+        }
+    }
+
+    public void delete(Long id) {
+        Validar.validarId(id);
+
+        Ocupacao ocupacao = getById(id);
+
+        try {
+            beginTransaction();
+            ocupacaoDAO.delete(ocupacao);
+            commitAndCloseTransaction();
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar a ocupação, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
     public void update(String novoNome, Long id) {
         if (novoNome == null || novoNome.isBlank() || id == null) {
