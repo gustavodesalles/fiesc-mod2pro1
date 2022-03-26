@@ -16,7 +16,7 @@ public class Setor {
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nome;
 
     public Setor() {

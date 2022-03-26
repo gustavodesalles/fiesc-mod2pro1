@@ -28,6 +28,11 @@ public class UsuarioDAO {
         return entityManager.find(Usuario.class, id);
     }
 
+    public Usuario getByEmailAndSenha(String email, String senha) {
+        String sql = "SELECT * FROM Usuario WHERE email = ?1 AND senha = ?2";
+        return (Usuario) entityManager.createNativeQuery(sql, Usuario.class).setParameter(1, email).setParameter(2, senha).getSingleResult();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Usuario> listAll() {
         String sql = "SELECT * FROM Usuario";

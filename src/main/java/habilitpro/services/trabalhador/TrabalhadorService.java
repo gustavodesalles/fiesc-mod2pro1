@@ -3,7 +3,6 @@ package habilitpro.services.trabalhador;
 import habilitpro.model.dao.modulo.AvaliacaoModuloDAO;
 import habilitpro.model.dao.trabalhador.TrabalhadorDAO;
 import habilitpro.model.persistence.empresa.Empresa;
-import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.trabalhador.Funcao;
 import habilitpro.model.persistence.trabalhador.Trabalhador;
 import habilitpro.model.persistence.trilha.Trilha;
@@ -57,10 +56,7 @@ public class TrabalhadorService {
     }
 
     public void delete(Long id) {
-        if (id == null) {
-            LOG.error("O ID do trabalhador está nulo!");
-            throw new EntityNotFoundException("ID nulo");
-        }
+        Validar.validarId(id);
 
         LOG.info("Preparando para encontrar o trabalhador.");
         Trabalhador trabalhador = getById(id);
@@ -68,6 +64,10 @@ public class TrabalhadorService {
         if (trabalhadorDAO.checkIfAvaliacaoModulo(trabalhador)) {
             LOG.error("O trabalhador ainda possui avaliações; delete-as antes de deletar o trabalhador.");
             throw new RuntimeException("Trabalhador possui avaliações");
+        }
+
+        for (Trilha t : trabalhador.getTrilhas()) {
+            trabalhador.getTrilhas().remove(trabalhador);
         }
 
         try {
@@ -149,71 +149,6 @@ public class TrabalhadorService {
 
         LOG.info("Trabalhador encontrado!");
         return trabalhador;
-    }
-
-    private String formatCpf(String cpf) {
-        return cpf.replaceAll("\\.|-","");
-    }
-
-    private boolean checkCpf(String cpf) {
-        cpf = formatCpf(cpf);
-        if (cpf.length() != 11 || cpf.equals("11111111111")
-                || cpf.equals("22222222222")
-                || cpf.equals("33333333333")
-                || cpf.equals("44444444444")
-                || cpf.equals("55555555555")
-                || cpf.equals("66666666666")
-                || cpf.equals("77777777777")
-                || cpf.equals("88888888888")
-                || cpf.equals("99999999999")
-                || cpf.equals("00000000000")) {
-            return false;
-        }
-        int digv1 = Character.getNumericValue(cpf.charAt(9));
-        int digv2 = Character.getNumericValue(cpf.charAt(10));
-
-        //verificar o primeiro dígito
-        int multiplicador = 10;
-        int soma = 0;
-        int resto1;
-
-        for (int i = 0; i < 9; ++i) {
-            int digito = Character.getNumericValue(cpf.charAt(i));
-            soma += digito * multiplicador;
-            --multiplicador;
-        }
-
-        if (((soma * 10) % 11) == 10) {
-            resto1 = 0;
-        } else {
-            resto1 = ((soma * 10) % 11);
-        }
-
-        //verificar o segundo dígito
-        multiplicador = 11;
-        soma = 0;
-        int resto2;
-
-        for (int i = 0; i < 10; ++i) {
-            int digito = Character.getNumericValue(cpf.charAt(i));
-            soma += digito * multiplicador;
-            --multiplicador;
-        }
-
-        if (((soma * 10) % 11) == 10) {
-            resto2 = 0;
-        } else {
-            resto2 = ((soma * 10) % 11);
-        }
-
-        return (digv1 == resto1 && digv2 == resto2);
-    }
-
-    private void validateIfNull(Trabalhador trabalhador) {
-        if (trabalhador == null) {
-            LOG.error("O trabalhador não existe!");
-            throw new RuntimeException("Trabalhador nulo");
-        }
     }
 
     private void beginTransaction() {

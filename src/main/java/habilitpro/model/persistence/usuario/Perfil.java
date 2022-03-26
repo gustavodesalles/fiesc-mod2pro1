@@ -10,7 +10,7 @@ public class Perfil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nome;
 
     @ManyToMany(mappedBy = "perfis")

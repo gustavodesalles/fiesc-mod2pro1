@@ -4,6 +4,7 @@ import habilitpro.model.dao.usuario.PerfilDAO;
 import habilitpro.model.dao.usuario.UsuarioDAO;
 import habilitpro.model.persistence.usuario.Perfil;
 import habilitpro.model.persistence.usuario.Usuario;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,57 +27,59 @@ public class PerfilService {
     public void create(Perfil perfil) {
         LOG.info("Preparando para criar um perfil.");
 
-        validateIfNull(perfil);
+        Validar.validarPerfil(perfil);
 
         String nome = perfil.getNome();
-        if (nome == null || nome.isBlank()) {
-            LOG.error("O nome do perfil está nulo!");
-            throw new EntityNotFoundException("Nome nulo");
-        }
+        Validar.validarString(nome);
 
-        beginTransaction();
-        perfilDAO.create(perfil);
-        commitAndCloseTransaction();
-        LOG.info("Perfil criado com sucesso!");
+        try {
+            beginTransaction();
+            perfilDAO.create(perfil);
+            commitAndCloseTransaction();
+            LOG.info("Perfil criado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao criar o perfil, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void delete(Long id) {
-        if (id == null) {
-            LOG.error("O ID está nulo!");
-            throw new EntityNotFoundException("ID nulo");
-        }
+        Validar.validarId(id);
 
         Perfil perfil = perfilDAO.getById(id);
-        validateIfNull(perfil);
+        Validar.validarPerfil(perfil);
 
-        beginTransaction();
-        perfilDAO.delete(perfil);
-        commitAndCloseTransaction();
-        LOG.info("Perfil deletado com sucesso!");
+        for (Usuario u : perfil.getUsuarios()) {
+            perfil.getUsuarios().remove(perfil);
+        }
+
+        try {
+            beginTransaction();
+            perfilDAO.delete(perfil);
+            commitAndCloseTransaction();
+            LOG.info("Perfil deletado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar o perfil, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public Perfil getById(Long id) {
-        if (id == null) {
-            LOG.error("O ID está nulo!");
-            throw new EntityNotFoundException("ID nulo");
-        }
+        Validar.validarId(id);
 
         Perfil perfil = perfilDAO.getById(id);
 
-        validateIfNull(perfil);
+        Validar.validarPerfil(perfil);
 
         LOG.info("Perfil encontrado!");
         return perfil;
     }
 
     public Perfil findByNome(String nome) {
-        if (nome == null) {
-            LOG.error("O nome do perfil está nulo!");
-            throw new EntityNotFoundException("Nome nulo");
-        }
+        Validar.validarString(nome);
 
         Perfil perfil = perfilDAO.findByNome(nome);
-        validateIfNull(perfil);
+        Validar.validarPerfil(perfil);
 
         LOG.info("Perfil encontrado!");
         return perfil;
@@ -96,43 +99,41 @@ public class PerfilService {
     }
 
     public void addUsuario(Perfil perfil, Usuario usuario) {
-        validateIfNull(perfil);
+        Validar.validarPerfil(perfil);
 
-        if (usuario == null) {
-            this.LOG.error("O usuário não existe!");
-            throw new EntityNotFoundException("Usuário nulo");
-        }
+        Validar.validarUsuario(usuario);
 
         LOG.info("Adicionando usuário.");
 
-        beginTransaction();
-        perfil.getUsuarios().add(usuario);
-        usuario.getPerfis().add(perfil);
-        commitAndCloseTransaction();
-        LOG.info("Usuário adicionado com sucesso!");
+        try {
+            beginTransaction();
+            perfil.getUsuarios().add(usuario);
+            usuario.getPerfis().add(perfil);
+            commitAndCloseTransaction();
+            LOG.info("Usuário adicionado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao adicionar o usuário, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void removeUsuario(Perfil perfil, Usuario usuario) {
-        validateIfNull(perfil);
+        Validar.validarPerfil(perfil);
 
-        if (usuario == null) {
-            this.LOG.error("O usuário não existe!");
-            throw new EntityNotFoundException("Usuário nulo");
-        }
+        Validar.validarUsuario(usuario);
 
         LOG.info("Removendo usuário.");
 
-        beginTransaction();
-        perfil.getUsuarios().remove(usuario);
-        usuario.getPerfis().remove(perfil);
-        commitAndCloseTransaction();
-        LOG.info("Usuário removido com sucesso!");
-    }
-
-    private void validateIfNull(Perfil perfil) {
-        if (perfil == null) {
-            LOG.error("O perfil não existe!");
-            throw new EntityNotFoundException("Perfil nulo");
+        try {
+            beginTransaction();
+            perfil.getUsuarios().remove(usuario);
+            usuario.getPerfis().remove(perfil);
+            commitAndCloseTransaction();
+            LOG.info("Usuário removido com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao remover o usuário, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 

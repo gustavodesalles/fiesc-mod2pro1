@@ -8,6 +8,8 @@ import habilitpro.model.persistence.trabalhador.Funcao;
 import habilitpro.model.persistence.trabalhador.Trabalhador;
 import habilitpro.model.persistence.trilha.Ocupacao;
 import habilitpro.model.persistence.trilha.Trilha;
+import habilitpro.model.persistence.usuario.Perfil;
+import habilitpro.model.persistence.usuario.Usuario;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,6 +64,20 @@ public class Validar {
         if (ocupacao == null) {
             LOG.error("A ocupação está nula!");
             throw new EntityNotFoundException("Ocupação nula");
+        }
+    }
+
+    public static void validarUsuario(Usuario usuario) {
+        if (usuario == null) {
+            LOG.error("O usuário não existe!");
+            throw new EntityNotFoundException("Usuário nulo");
+        }
+    }
+
+    public static void validarPerfil(Perfil perfil) {
+        if (perfil == null) {
+            LOG.error("O perfil não existe!");
+            throw new EntityNotFoundException("Perfil nulo");
         }
     }
 
@@ -230,5 +246,28 @@ public class Validar {
             LOG.error("O nome do estado é inválido!");
             throw new RuntimeException("Estado inválido");
         }
+    }
+
+    public static void validarEmail(String email) {
+        if (!checkEmail(email)) {
+            LOG.error("O e-mail do usuário é inválido!");
+            throw new RuntimeException("E-mail inválido");
+        }
+    }
+
+    public static boolean checkEmail(String email) {
+        String rePattern = "(.+)@(.+)\\.(.+)";
+        return email.matches(rePattern);
+    }
+
+    public static void validarSenha(String senha) {
+        if (!checkSenha(senha)) {
+            LOG.error("A senha do usuário é inválida!");
+            throw new RuntimeException("Senha inválida");
+        }
+    }
+
+    public static boolean checkSenha(String senha) {
+        return senha.length() >= 8 && senha.matches(".*\\d.*") && senha.matches(".*\\w.*");
     }
 }
