@@ -32,7 +32,7 @@ public class FuncaoService {
         Setor setor = funcao.getSetor();
         Validar.validarSetor(setor);
 
-        LOG.info("Buscando setor " + nome);
+        LOG.info("Buscando função " + nome);
         Funcao funcao1 = findByName(nome);
         if (funcao1 != null && funcao1.getSetor().getNome().equals(funcao.getSetor().getNome())) {
             LOG.error("Esta função já existe!");

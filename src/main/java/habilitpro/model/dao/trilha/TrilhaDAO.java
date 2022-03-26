@@ -1,6 +1,7 @@
 package habilitpro.model.dao.trilha;
 
 import habilitpro.model.persistence.empresa.Empresa;
+import habilitpro.model.persistence.modulo.Modulo;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.EntityManager;
 
@@ -26,6 +27,11 @@ public class TrilhaDAO {
 
     public Trilha getById(long id) {
         return entityManager.find(Trilha.class, id);
+    }
+
+    public boolean checkIfModulo(Trilha trilha) {
+        String sql = "SELECT * FROM Modulo WHERE trilha_id =:trilha_id";
+        return (entityManager.createNativeQuery(sql, Modulo.class).setParameter("trilha_id", trilha.getId()).getResultList().size() > 0);
     }
 
     @SuppressWarnings("unchecked")

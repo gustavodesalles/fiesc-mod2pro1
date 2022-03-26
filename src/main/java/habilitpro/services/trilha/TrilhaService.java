@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
 import habilitpro.services.trabalhador.TrabalhadorService;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,18 +33,16 @@ public class TrilhaService {
     public void create(Trilha trilha) {
         LOG.info("Preparando para criar a trilha.");
 
-        validateIfNull(trilha);
+        Validar.validarTrilha(trilha);
 
         Empresa empresa = trilha.getEmpresa();
-        validarEmpresa(empresa);
+        Validar.validarEmpresa(empresa);
 
         Ocupacao ocupacao = trilha.getOcupacao();
-        if (validarOcupacao(ocupacao) != null) {
-            trilha.setOcupacao(validarOcupacao(ocupacao));
-        }
+        Validar.validarOcupacao(ocupacao);
 
         int satisfacao = trilha.getNivelSatisfacao();
-        validarSatisfacao(satisfacao);
+        Validar.validarSatisfacao(satisfacao);
 
         try {
             trilha.setNome(criarNome(empresa, ocupacao).toUpperCase());
@@ -52,26 +51,34 @@ public class TrilhaService {
             beginTransaction();
             trilhaDAO.create(trilha);
             commitAndCloseTransaction();
+            LOG.info("Trilha criada com sucesso!");
         } catch (Exception e) {
             LOG.error("Erro ao criar a trilha, causado por: " + e.getMessage());
             throw new RuntimeException(e);
         }
-        LOG.info("Trilha criada com sucesso!");
     }
 
     public void delete(Long id) {
-        validarId(id);
+        Validar.validarId(id);
 
         LOG.info("Preparando para encontrar a trilha.");
 
         Trilha trilha = getById(id);
-        validateIfNull(trilha);
-        LOG.info("Trilha encontrada!");
 
-        beginTransaction();
-        trilhaDAO.delete(trilha);
-        commitAndCloseTransaction();
-        LOG.info("Trilha deletada com sucesso!");
+        if (trilhaDAO.checkIfModulo(trilha)) {
+            LOG.error("A trilha ainda possui módulos; delete-os antes de deletar a trilha.");
+            throw new RuntimeException("Trilha possui módulos");
+        }
+
+        try {
+            beginTransaction();
+            trilhaDAO.delete(trilha);
+            commitAndCloseTransaction();
+            LOG.info("Trilha deletada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar a trilha, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void update(Trilha novaTrilha, Long id) {
@@ -81,12 +88,12 @@ public class TrilhaService {
         }
 
         LOG.info("Preparando para encontrar a trilha.");
-        Trilha trilha = getById(id);
-        validateIfNull(trilha);
 
-        validarEmpresa(novaTrilha.getEmpresa());
-        validarOcupacao(novaTrilha.getOcupacao());
-        validarSatisfacao(novaTrilha.getNivelSatisfacao());
+        Trilha trilha = getById(id);
+
+        Validar.validarEmpresa(novaTrilha.getEmpresa());
+        Validar.validarOcupacao(novaTrilha.getOcupacao());
+        Validar.validarSatisfacao(novaTrilha.getNivelSatisfacao());
 
         try {
             beginTransaction();
@@ -106,14 +113,11 @@ public class TrilhaService {
     }
 
     public Trilha getById(Long id) {
-        validarId(id);
+        Validar.validarId(id);
 
         Trilha trilha = trilhaDAO.getById(id);
 
-        if (trilha == null) {
-            LOG.error("Trilha não encontrada!");
-            throw new RuntimeException("Trilha nula");
-        }
+        Validar.validarTrilha(trilha);
 
         LOG.info("Trilha encontrada!");
         return trilha;
@@ -133,7 +137,7 @@ public class TrilhaService {
     }
 
     public List<Trilha> listByEmpresa(Empresa empresa) {
-        validarEmpresa(empresa);
+        Validar.validarEmpresa(empresa);
 
         LOG.info("Preparando para buscar as trilhas da empresa: " + empresa.getNome());
         List<Trilha> trilhas = trilhaDAO.listByEmpresa(empresa);
@@ -148,9 +152,9 @@ public class TrilhaService {
     }
 
     public void addTrabalhador(Trilha trilha, Trabalhador trabalhador) {
-        validateIfNull(trilha);
+        Validar.validarTrilha(trilha);
 
-        validarTrabalhador(trabalhador);
+        Validar.validarTrabalhador(trabalhador);
 
         try {
             beginTransaction();
@@ -184,52 +188,6 @@ public class TrilhaService {
             }
         }
         return numSeq;
-    }
-
-    private void validateIfNull(Trilha trilha) {
-        if (trilha == null) {
-            LOG.error("A trilha não existe!");
-            throw new RuntimeException("Trilha nula");
-        }
-    }
-
-    private void validarEmpresa(Empresa empresa) {
-        if (empresa == null) {
-            LOG.error("A empresa não existe!");
-            throw new EntityNotFoundException("Empresa nula");
-        }
-    }
-
-    private void validarSatisfacao(int satisfacao) {
-        if (satisfacao > 5 || satisfacao < 1) {
-            LOG.error("O nível de satisfação não é válido!");
-            throw new RuntimeException("Nível de satisfação inválido");
-        }
-    }
-
-    private Ocupacao validarOcupacao(Ocupacao ocupacao) {
-        if (ocupacao == null) {
-            LOG.error("A ocupação está nula!");
-            throw new EntityNotFoundException("Ocupação nula");
-        }
-
-        String ocupacaoNome = ocupacao.getNome();
-        LOG.info("Buscando ocupação.");
-        return ocupacaoService.findByNome(ocupacaoNome);
-    }
-
-    private void validarId(Long id) {
-        if (id == null) {
-            LOG.error("O ID da trilha está nulo!");
-            throw new RuntimeException("ID nulo");
-        }
-    }
-
-    private void validarTrabalhador(Trabalhador trabalhador) {
-        if (trabalhador == null) {
-            LOG.error("O trabalhador não existe!");
-            throw new EntityNotFoundException("Trabalhador nulo");
-        }
     }
 
     private void beginTransaction() {

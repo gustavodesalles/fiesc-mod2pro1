@@ -22,9 +22,17 @@ public class OcupacaoService {
     }
 
     public void create(Ocupacao ocupacao) {
-        validateIfNull(ocupacao);
+        Validar.validarOcupacao(ocupacao);
 
-        Validar.validarString(ocupacao.getNome());
+        String nome = ocupacao.getNome();
+        Validar.validarString(nome);
+
+        LOG.info("Buscando ocupação " + nome);
+        Ocupacao ocupacao1 = findByNome(nome);
+        if (ocupacao1.getNome().equals(nome)) {
+            LOG.error("Esta ocupação já existe!");
+            throw new RuntimeException("Ocupação já existe");
+        }
 
         try {
             beginTransaction();
@@ -40,6 +48,11 @@ public class OcupacaoService {
         Validar.validarId(id);
 
         Ocupacao ocupacao = getById(id);
+
+        if (ocupacaoDAO.checkIfTrilha(ocupacao)) {
+            LOG.error("A ocupação ainda possui trilhas; por favor, delete-as antes de deletar a ocupação.");
+            throw new RuntimeException("Ocupação possui trilhas");
+        }
 
         try {
             beginTransaction();
@@ -58,36 +71,33 @@ public class OcupacaoService {
         }
 
         LOG.info("Preparando para encontrar a ocupação.");
-        Ocupacao ocupacao = ocupacaoDAO.getById(id);
-        validateIfNull(ocupacao);
-        LOG.info("Ocupação encontrada!");
+        Ocupacao ocupacao = getById(id);
 
-        beginTransaction();
-        ocupacao.setNome(novoNome);
-        commitAndCloseTransaction();
+        try {
+            beginTransaction();
+            ocupacao.setNome(novoNome);
+            commitAndCloseTransaction();
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar a ocupação, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public Ocupacao getById(Long id) {
-        if (id == null) {
-            LOG.error("O ID da ocupação está nulo!");
-            throw new RuntimeException("ID nulo");
-        }
+        Validar.validarId(id);
 
         Ocupacao ocupacao = ocupacaoDAO.getById(id);
-        validateIfNull(ocupacao);
+        Validar.validarOcupacao(ocupacao);
 
         LOG.info("Ocupação encontrada!");
         return ocupacao;
     }
 
     public Ocupacao findByNome(String nome) {
-        if (nome == null) {
-            LOG.error("O nome da ocupação está nulo!");
-            throw new RuntimeException("Nome nulo");
-        }
+        Validar.validarString(nome);
 
         Ocupacao ocupacao = ocupacaoDAO.findByNome(nome);
-        validateIfNull(ocupacao);
+        Validar.validarOcupacao(ocupacao);
 
         LOG.info("Ocupação encontrada!");
         return ocupacao;
@@ -107,10 +117,7 @@ public class OcupacaoService {
     }
 
     public List<Ocupacao> listByTrilha(Trilha trilha) {
-        if (trilha == null) {
-            LOG.error("A trilha está nula!");
-            throw new EntityNotFoundException("Trilha nula");
-        }
+        Validar.validarTrilha(trilha);
 
         LOG.info("Preparando para listar as ocupações da trilha: " + trilha.getNome());
         List<Ocupacao> ocupacoes = ocupacaoDAO.listByTrilha(trilha);
@@ -122,13 +129,6 @@ public class OcupacaoService {
 
         LOG.info("Número de ocupações encontradas: " + ocupacoes.size());
         return ocupacoes;
-    }
-
-    private void validateIfNull(Ocupacao ocupacao) {
-        if (ocupacao == null) {
-            LOG.error("A ocupação não existe!");
-            throw new EntityNotFoundException("Ocupação nula");
-        }
     }
 
     private void beginTransaction() {

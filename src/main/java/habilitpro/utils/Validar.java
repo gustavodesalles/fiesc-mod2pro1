@@ -6,6 +6,7 @@ import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.modulo.Modulo;
 import habilitpro.model.persistence.trabalhador.Funcao;
 import habilitpro.model.persistence.trabalhador.Trabalhador;
+import habilitpro.model.persistence.trilha.Ocupacao;
 import habilitpro.model.persistence.trilha.Trilha;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,6 +58,13 @@ public class Validar {
         }
     }
 
+    public static void validarOcupacao(Ocupacao ocupacao) {
+        if (ocupacao == null) {
+            LOG.error("A ocupação está nula!");
+            throw new EntityNotFoundException("Ocupação nula");
+        }
+    }
+
     public static void validarString(String string) {
         if (string == null || string.isBlank()) {
             LOG.error("A string está nula!");
@@ -68,6 +76,13 @@ public class Validar {
         if (id == null) {
             LOG.error("O ID da trilha está nulo!");
             throw new RuntimeException("ID nulo");
+        }
+    }
+
+    public static void validarSatisfacao(int satisfacao) {
+        if (satisfacao > 5 || satisfacao < 1) {
+            LOG.error("O nível de satisfação não é válido!");
+            throw new RuntimeException("Nível de satisfação inválido");
         }
     }
 
