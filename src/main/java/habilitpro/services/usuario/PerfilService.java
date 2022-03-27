@@ -1,7 +1,6 @@
 package habilitpro.services.usuario;
 
 import habilitpro.model.dao.usuario.PerfilDAO;
-import habilitpro.model.dao.usuario.UsuarioDAO;
 import habilitpro.model.persistence.usuario.Perfil;
 import habilitpro.model.persistence.usuario.Usuario;
 import habilitpro.utils.Validar;
@@ -23,9 +22,9 @@ public class PerfilService {
     }
 
     public void create(Perfil perfil) {
-        LOG.info("Preparando para criar um perfil.");
-
         Validar.validarPerfil(perfil);
+
+        LOG.info("Preparando para criar um perfil.");
 
         String nome = perfil.getNome();
         Validar.validarString(nome);
@@ -44,11 +43,13 @@ public class PerfilService {
     public void delete(Long id) {
         Validar.validarId(id);
 
+        LOG.info("Preparando para encontrar o perfil.");
+
         Perfil perfil = perfilDAO.getById(id);
         Validar.validarPerfil(perfil);
 
         for (Usuario u : perfil.getUsuarios()) {
-            perfil.getUsuarios().remove(perfil);
+            u.getPerfis().remove(perfil);
         }
 
         try {
@@ -58,6 +59,28 @@ public class PerfilService {
             LOG.info("Perfil deletado com sucesso!");
         } catch (Exception e) {
             LOG.error("Erro ao deletar o perfil, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void update(Perfil novoPerfil, Long id) {
+        Validar.validarPerfil(novoPerfil);
+
+        Validar.validarId(id);
+
+        LOG.info("Preparando para encontrar o perfil.");
+
+        Perfil perfil = getById(id);
+
+        Validar.validarString(novoPerfil.getNome());
+
+        try {
+            beginTransaction();
+            perfil.setNome(novoPerfil.getNome());
+            commitAndCloseTransaction();
+            LOG.info("Perfil atualizado com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar o perfil, causado por: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

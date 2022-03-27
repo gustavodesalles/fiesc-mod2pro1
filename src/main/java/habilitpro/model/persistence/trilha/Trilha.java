@@ -30,7 +30,7 @@ public class Trilha {
     private int nivelSatisfacao;
     private String anotacoes;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Trabalhador> trabalhadores;
 
     public Trilha() {

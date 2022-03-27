@@ -1,4 +1,4 @@
-package habilitpro.model.enums;
+package habilitpro.enums;
 
 public enum EnumStatusModulo {
     NAO_INIC("Curso não iniciado"),

@@ -1,16 +1,10 @@
 package habilitpro.services.empresa;
 
 import habilitpro.model.dao.empresa.EmpresaDAO;
-import habilitpro.model.dao.empresa.SetorDAO;
-import habilitpro.model.dao.trabalhador.FuncaoDAO;
-import habilitpro.model.dao.trilha.TrilhaDAO;
-import habilitpro.model.enums.EnumTipoEmpresa;
+import habilitpro.enums.EnumTipoEmpresa;
 import habilitpro.model.persistence.empresa.Empresa;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 
-import habilitpro.model.persistence.empresa.Setor;
-import habilitpro.model.persistence.trabalhador.Funcao;
 import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

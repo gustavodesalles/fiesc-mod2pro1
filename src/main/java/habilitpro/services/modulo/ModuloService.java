@@ -2,7 +2,7 @@ package habilitpro.services.modulo;
 
 import habilitpro.model.dao.modulo.AvaliacaoModuloDAO;
 import habilitpro.model.dao.modulo.ModuloDAO;
-import habilitpro.model.enums.EnumStatusModulo;
+import habilitpro.enums.EnumStatusModulo;
 import habilitpro.model.persistence.modulo.Modulo;
 import habilitpro.model.persistence.trilha.Trilha;
 import habilitpro.utils.Validar;

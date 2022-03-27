@@ -1,4 +1,4 @@
-package habilitpro.model.enums;
+package habilitpro.enums;
 
 public enum EnumSegmentoEmpresa {
     ALIB("Alimentos e Bebidas"),

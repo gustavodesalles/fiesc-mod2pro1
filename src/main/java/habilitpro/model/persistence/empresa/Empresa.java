@@ -1,8 +1,8 @@
 package habilitpro.model.persistence.empresa;
 
-import habilitpro.model.enums.EnumRegionalEmpresa;
-import habilitpro.model.enums.EnumSegmentoEmpresa;
-import habilitpro.model.enums.EnumTipoEmpresa;
+import habilitpro.enums.EnumRegionalEmpresa;
+import habilitpro.enums.EnumSegmentoEmpresa;
+import habilitpro.enums.EnumTipoEmpresa;
 import javax.persistence.*;
 
 @Entity

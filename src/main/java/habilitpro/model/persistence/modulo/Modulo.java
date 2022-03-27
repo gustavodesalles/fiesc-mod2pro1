@@ -1,6 +1,6 @@
 package habilitpro.model.persistence.modulo;
 
-import habilitpro.model.enums.EnumStatusModulo;
+import habilitpro.enums.EnumStatusModulo;
 import habilitpro.model.persistence.trilha.Trilha;
 import javax.persistence.*;
 

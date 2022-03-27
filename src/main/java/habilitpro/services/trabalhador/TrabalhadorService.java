@@ -71,7 +71,7 @@ public class TrabalhadorService {
         }
 
         for (Trilha t : trabalhador.getTrilhas()) {
-            trabalhador.getTrilhas().remove(trabalhador);
+            t.getTrabalhadores().remove(trabalhador);
         }
 
         try {

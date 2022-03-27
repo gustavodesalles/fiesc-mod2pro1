@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 
 public class UsuarioService {
     private static final Logger LOG = LogManager.getLogger(UsuarioService.class);
@@ -21,9 +22,9 @@ public class UsuarioService {
     }
 
     public void create(Usuario usuario) {
-        LOG.info("Preparando para criar o usuário.");
-
         Validar.validarUsuario(usuario);
+
+        LOG.info("Preparando para criar o usuário.");
 
         String nome = usuario.getNome();
         Validar.validarString(nome);
@@ -72,6 +73,8 @@ public class UsuarioService {
             throw new EntityNotFoundException("Parâmetro nulo");
         }
 
+        LOG.info("Preparando para encontrar o usuário.");
+
         Usuario usuario = getById(id);
 
         Validar.validarString(novoUsuario.getNome());
@@ -86,6 +89,7 @@ public class UsuarioService {
             usuario.setEmail(novoUsuario.getEmail());
             usuario.setSenha(novoUsuario.getSenha());
             commitAndCloseTransaction();
+            LOG.info("Usuário atualizado com sucesso!");
         } catch (Exception e) {
             LOG.error("Erro ao atualizar o usuário, causado por: " + e.getMessage());
             throw new RuntimeException(e);
@@ -106,12 +110,11 @@ public class UsuarioService {
         Validar.validarEmail(email);
         Validar.validarSenha(senha);
 
-        Usuario usuario = usuarioDAO.getByEmailAndSenha(email, senha);
-
-        if (usuario != null) {
+        try {
+            Usuario usuario = usuarioDAO.getByEmailAndSenha(email, senha);
             LOG.info("Usuário encontrado!");
             return usuario;
-        } else {
+        } catch (NoResultException n) {
             LOG.info("Usuário não encontrado!");
             return null;
         }

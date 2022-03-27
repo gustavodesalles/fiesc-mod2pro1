@@ -19,9 +19,8 @@ public class Perfil {
     public Perfil() {
     }
 
-    public Perfil(long id, String nome) {
-        this.id = id;
-        this.nome = nome;
+    public Perfil(String nome) {
+        this.nome = nome.toUpperCase();
     }
 
     public long getId() {

@@ -31,7 +31,7 @@ public class Trabalhador {
 
     private LocalDate dataUltimaAlter;
 
-    @ManyToMany(mappedBy = "trabalhadores")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "trabalhadores")
     private List<Trilha> trilhas;
 
     @OneToMany(mappedBy = "trabalhador")

@@ -1,4 +1,4 @@
-package habilitpro.model.enums;
+package habilitpro.enums;
 
 public enum EnumRegionalEmpresa {
     NNE("Norte-Nordeste"),

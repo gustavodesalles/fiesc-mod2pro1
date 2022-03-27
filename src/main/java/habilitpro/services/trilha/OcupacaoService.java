@@ -51,6 +51,7 @@ public class OcupacaoService {
             beginTransaction();
             ocupacaoDAO.delete(ocupacao);
             commitAndCloseTransaction();
+            LOG.info("Ocupação deletada com sucesso!");
         } catch (Exception e) {
             LOG.error("Erro ao deletar a ocupação, causado por: " + e.getMessage());
             throw new RuntimeException(e);
@@ -70,6 +71,7 @@ public class OcupacaoService {
             beginTransaction();
             ocupacao.setNome(novoNome);
             commitAndCloseTransaction();
+            LOG.info("Ocupação atualizada com sucesso!");
         } catch (Exception e) {
             LOG.error("Erro ao atualizar a ocupação, causado por: " + e.getMessage());
             throw new RuntimeException(e);

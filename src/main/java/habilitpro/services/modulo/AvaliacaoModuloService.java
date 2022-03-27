@@ -21,9 +21,9 @@ public class AvaliacaoModuloService {
     }
 
     public void create(AvaliacaoModulo avaliacaoModulo) {
-        LOG.info("Preparando para criar uma avaliação.");
-
         Validar.validarAvaliacao(avaliacaoModulo);
+
+        LOG.info("Preparando para criar uma avaliação.");
 
         try {
             beginTransaction();
@@ -37,9 +37,9 @@ public class AvaliacaoModuloService {
     }
 
     public void delete(Long id) {
-        LOG.info("Preparando para encontrar a avaliação.");
-
         Validar.validarId(id);
+
+        LOG.info("Preparando para encontrar a avaliação.");
 
         AvaliacaoModulo avaliacaoModulo = getById(id);
 
@@ -62,6 +62,8 @@ public class AvaliacaoModuloService {
 
         Validar.validarModulo(novaAv.getModulo());
         Validar.validarTrabalhador(novaAv.getTrabalhador());
+
+        LOG.info("Preparando para encontrar a avaliação.");
 
         AvaliacaoModulo avaliacaoModulo = getById(id);
 

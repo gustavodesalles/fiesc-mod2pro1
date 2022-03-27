@@ -1,20 +1,10 @@
 package habilitpro.application;
 
 import habilitpro.connection.JpaConnectionFactory;
-import habilitpro.model.enums.EnumRegionalEmpresa;
-import habilitpro.model.enums.EnumSegmentoEmpresa;
-import habilitpro.model.enums.EnumTipoEmpresa;
-import habilitpro.model.persistence.empresa.Empresa;
 
 import javax.persistence.EntityManager;
 
-import habilitpro.model.persistence.empresa.Setor;
-import habilitpro.model.persistence.modulo.AvaliacaoModulo;
-import habilitpro.model.persistence.modulo.Modulo;
-import habilitpro.model.persistence.trabalhador.Funcao;
-import habilitpro.model.persistence.trabalhador.Trabalhador;
-import habilitpro.model.persistence.trilha.Ocupacao;
-import habilitpro.model.persistence.trilha.Trilha;
+import habilitpro.model.persistence.usuario.Usuario;
 import habilitpro.services.empresa.EmpresaService;
 import habilitpro.services.empresa.SetorService;
 import habilitpro.services.modulo.AvaliacaoModuloService;
@@ -25,12 +15,11 @@ import habilitpro.services.trilha.OcupacaoService;
 import habilitpro.services.trilha.TrilhaService;
 import habilitpro.services.usuario.PerfilService;
 import habilitpro.services.usuario.UsuarioService;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static final Logger LOG = LogManager.getLogger(Main.class);
@@ -47,11 +36,42 @@ public class Main {
         FuncaoService funcaoService = new FuncaoService(entityManager);
         UsuarioService usuarioService = new UsuarioService(entityManager);
         PerfilService perfilService = new PerfilService(entityManager);
+        Scanner input = new Scanner(System.in);
+        String email, senha;
 
         LOG.info("Boas vindas.");
 
-        Empresa empresa = new Empresa("aBbA", "16.169.773/0001-36", EnumTipoEmpresa.MATRIZ, "d", EnumSegmentoEmpresa.ALIB, "Belém", "Pa", EnumRegionalEmpresa.VIM);
-        Empresa empresa1 = new Empresa("ceb", "96644218000158", EnumTipoEmpresa.FILIAL, "d", EnumSegmentoEmpresa.ALIB, "aNANINDEUA", "pA", EnumRegionalEmpresa.VIM);
+        //Usuario usuario = new Usuario("gustavo", "485.537.080-04", "gu@sta.vo", "1b2b3b4c");
+        //usuarioService.create(usuario);
+
+        do {
+            System.out.println("Digite o seu endereço de e-mail: ");
+            email = input.nextLine();
+        } while (!Validar.checkEmail(email));
+
+        do {
+            System.out.println("Digite a sua senha: ");
+            senha = input.nextLine();
+        } while (!Validar.checkSenha(senha));
+
+        Usuario usuario = usuarioService.getByEmailAndSenha(email, senha);
+        if (usuario != null) {
+            System.out.println("Você está cadastrado no sistema!");
+            System.out.println(usuario);
+        } else {
+            System.out.println("Você não está cadastrado.");
+        }
+
+        //Perfil perfil = new Perfil("pernil");
+        //perfilService.create(perfil);
+        //perfilService.addUsuario(perfilService.getById(2L), usuarioService.getById(1L));
+        //usuarioService.addPerfil(usuarioService.getById(1L), perfilService.getById(1L));
+        //perfilService.update(new Perfil("bombril"), 1L);
+        //perfilService.delete(1L);
+        //System.out.println(usuarioService.getByEmailAndSenha("gu@sta.vo", "1b2b3b4c"));
+
+        //Empresa empresa = new Empresa("aBbA", "16.169.773/0001-36", EnumTipoEmpresa.MATRIZ, "d", EnumSegmentoEmpresa.ALIB, "Belém", "Pa", EnumRegionalEmpresa.VIM);
+        //Empresa empresa1 = new Empresa("ceb", "96644218000158", EnumTipoEmpresa.FILIAL, "d", EnumSegmentoEmpresa.ALIB, "aNANINDEUA", "pA", EnumRegionalEmpresa.VIM);
         //empresaService.create(empresa1);
         //empresaService.update(empresa1, 1L);
         //empresaService.delete(2L);
@@ -91,7 +111,25 @@ public class Main {
         //trilhaService.delete(2L);
         //moduloService.iniciarModulo(moduloService.getById(1L), OffsetDateTime.now());
 
-        AvaliacaoModulo avaliacaoModulo = new AvaliacaoModulo(moduloService.getById(1L), trabalhadorService.getById(1L));
-        avaliacaoModuloService.create(avaliacaoModulo);
+        //AvaliacaoModulo avaliacaoModulo = new AvaliacaoModulo(moduloService.getById(1L), trabalhadorService.getById(1L));
+        //avaliacaoModuloService.create(avaliacaoModulo);
+        //moduloService.delete(1L);
+        //trabalhadorService.delete(1L);
+        //trilhaService.update(trilha, 2L);
+        //trilhaService.addTrabalhador(trilhaService.getById(2L), trabalhadorService.getById(1L));
+        //trabalhadorService.delete(1L);
+        //avaliacaoModuloService.delete(2L);
+
+        //funcaoService.delete(2L);
+        //funcaoService.delete(1L);
+
+        //setorService.delete(2L);
+        //setorService.delete(1L);
+
+        //empresaService.delete(1L);
+        //empresaService.delete(2L);
+
+        //moduloService.delete(1L);
+        //trilhaService.delete(2L);
     }
 }

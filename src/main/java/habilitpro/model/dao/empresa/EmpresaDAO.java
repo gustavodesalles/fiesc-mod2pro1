@@ -1,6 +1,6 @@
 package habilitpro.model.dao.empresa;
 
-import habilitpro.model.enums.EnumTipoEmpresa;
+import habilitpro.enums.EnumTipoEmpresa;
 import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.trabalhador.Trabalhador;

@@ -1,6 +1,6 @@
 package habilitpro.utils;
 
-import habilitpro.model.enums.EnumTipoEmpresa;
+import habilitpro.enums.EnumTipoEmpresa;
 import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.empresa.Setor;
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
@@ -271,7 +271,7 @@ public class Validar {
     public static void validarSenha(String senha) {
         if (!checkSenha(senha)) {
             LOG.error("A senha do usuário é inválida!");
-            throw new RuntimeException("Senha inválida");
+            throw new RuntimeException("Senha inválida; mínimo 8 letras e números");
         }
     }
 
