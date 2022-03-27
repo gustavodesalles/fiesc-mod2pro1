@@ -10,7 +10,7 @@ public class Funcao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nome;
 
     @ManyToOne
@@ -21,7 +21,7 @@ public class Funcao {
     }
 
     public Funcao(String nome, Setor setor) {
-        this.nome = nome;
+        this.nome = nome.toUpperCase();
         this.setor = setor;
     }
 

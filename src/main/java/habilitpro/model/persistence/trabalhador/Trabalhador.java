@@ -41,7 +41,7 @@ public class Trabalhador {
     }
 
     public Trabalhador(String nome, String cpf, Empresa empresa, Funcao funcao) {
-        this.nome = nome;
+        this.nome = nome.toUpperCase();
         this.cpf = cpf;
         this.empresa = empresa;
         this.funcao = funcao;

@@ -31,9 +31,9 @@ public class FuncaoDAO {
         return entityManager.find(Funcao.class, id);
     }
 
-    public Funcao findByName(String name) {
-        String sql = "SELECT * FROM Funcao WHERE name =:name";
-        return (Funcao) this.entityManager.createNativeQuery(sql, Funcao.class).setParameter("name",name).getSingleResult();
+    public Funcao findByName(String nome) {
+        String sql = "SELECT * FROM Funcao WHERE nome =:nome";
+        return (Funcao) this.entityManager.createNativeQuery(sql, Funcao.class).setParameter("nome",nome).getSingleResult();
     }
 
     public boolean checkIfTrabalhador(Funcao funcao) {

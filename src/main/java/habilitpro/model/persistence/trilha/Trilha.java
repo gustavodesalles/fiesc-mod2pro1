@@ -17,7 +17,7 @@ public class Trilha {
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "ocupacao_id")
     private Ocupacao ocupacao;
 

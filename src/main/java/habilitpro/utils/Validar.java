@@ -3,6 +3,7 @@ package habilitpro.utils;
 import habilitpro.model.enums.EnumTipoEmpresa;
 import habilitpro.model.persistence.empresa.Empresa;
 import habilitpro.model.persistence.empresa.Setor;
+import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import habilitpro.model.persistence.modulo.Modulo;
 import habilitpro.model.persistence.trabalhador.Funcao;
 import habilitpro.model.persistence.trabalhador.Trabalhador;
@@ -36,6 +37,13 @@ public class Validar {
         if (modulo == null) {
             LOG.error("O módulo está nulo!");
             throw new EntityNotFoundException("Módulo nulo");
+        }
+    }
+
+    public static void validarAvaliacao(AvaliacaoModulo avaliacaoModulo) {
+        if (avaliacaoModulo == null) {
+            LOG.error("A avaliação está nula!");
+            throw new EntityNotFoundException("Avaliação nula");
         }
     }
 

@@ -43,6 +43,10 @@ public class TrabalhadorService {
 
         Funcao funcao = trabalhador.getFuncao();
         Validar.validarFuncao(funcao);
+        if (!funcao.getSetor().getEmpresa().equals(empresa)) {
+            LOG.error("A função não pertence à empresa!");
+            throw new RuntimeException("Função não corresponde");
+        }
 
         try {
             beginTransaction();

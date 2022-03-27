@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import java.time.DayOfWeek;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class ModuloService {
@@ -157,6 +159,44 @@ public class ModuloService {
 
         LOG.info("Número de módulos encontrados: " + modulos.size());
         return modulos;
+    }
+
+    public void iniciarModulo(Modulo modulo, OffsetDateTime time) {
+        beginTransaction();
+        if (modulo.getStatus().equals(EnumStatusModulo.NAO_INIC)) {
+            modulo.setStatus(EnumStatusModulo.ANDAMENTO);
+            modulo.setDataInicio(time);
+            modulo.setDataPrazo(calcularDataPrazo(modulo));
+        }
+        commitAndCloseTransaction();
+    }
+
+    public void encerrarModulo(Modulo modulo) {
+        beginTransaction();
+        if (modulo.getStatus().equals(EnumStatusModulo.ANDAMENTO)) {
+            modulo.setStatus(EnumStatusModulo.FASE);
+            modulo.setDataFim(OffsetDateTime.now());
+        }
+        commitAndCloseTransaction();
+    }
+
+    public void finalizarAvaliacao(Modulo modulo) {
+        beginTransaction();
+        if ((modulo.getStatus().equals(EnumStatusModulo.ANDAMENTO) || modulo.getStatus().equals(EnumStatusModulo.FASE)) && OffsetDateTime.now().isAfter(modulo.getDataPrazo())) {
+            modulo.setStatus(EnumStatusModulo.AV_FINALIZADA);
+        }
+        commitAndCloseTransaction();
+    }
+
+    public OffsetDateTime calcularDataPrazo(Modulo modulo) {
+        OffsetDateTime auxData = modulo.getDataInicio().withHour(23).withMinute(55).withSecond(0).withNano(0);
+        int i = modulo.getPrazoLimite();
+        if (auxData.getDayOfWeek() != DayOfWeek.SATURDAY && auxData.getDayOfWeek() != DayOfWeek.SUNDAY) i--;
+        for (int j = i; j > 0; j--) {
+            auxData = auxData.plusDays(1);
+            if (auxData.getDayOfWeek() == DayOfWeek.SATURDAY || auxData.getDayOfWeek() == DayOfWeek.SUNDAY) j++;
+        }
+        return auxData;
     }
 
     private void beginTransaction() {

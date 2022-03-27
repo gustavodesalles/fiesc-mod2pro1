@@ -3,11 +3,11 @@ package habilitpro.services.modulo;
 import habilitpro.model.dao.modulo.AvaliacaoModuloDAO;
 import habilitpro.model.persistence.modulo.AvaliacaoModulo;
 import habilitpro.model.persistence.modulo.Modulo;
+import habilitpro.utils.Validar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public class AvaliacaoModuloService {
@@ -23,29 +23,35 @@ public class AvaliacaoModuloService {
     public void create(AvaliacaoModulo avaliacaoModulo) {
         LOG.info("Preparando para criar uma avaliação.");
 
-        validateIfNull(avaliacaoModulo);
+        Validar.validarAvaliacao(avaliacaoModulo);
 
-        beginTransaction();
-        avaliacaoModuloDAO.create(avaliacaoModulo);
-        commitAndCloseTransaction();
-        LOG.info("Avaliação criada com sucesso!");
+        try {
+            beginTransaction();
+            avaliacaoModuloDAO.create(avaliacaoModulo);
+            commitAndCloseTransaction();
+            LOG.info("Avaliação criada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao criar a avaliação, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void delete(Long id) {
         LOG.info("Preparando para encontrar a avaliação.");
 
-        if (id == null) {
-            LOG.error("O ID da avaliação está nulo!");
-            throw new RuntimeException("ID nulo");
+        Validar.validarId(id);
+
+        AvaliacaoModulo avaliacaoModulo = getById(id);
+
+        try {
+            beginTransaction();
+            avaliacaoModuloDAO.delete(avaliacaoModulo);
+            commitAndCloseTransaction();
+            LOG.info("Avaliação deletada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao deletar a avaliação, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-
-        AvaliacaoModulo avaliacaoModulo = avaliacaoModuloDAO.getById(id);
-        validateIfNull(avaliacaoModulo);
-
-        beginTransaction();
-        avaliacaoModuloDAO.delete(avaliacaoModulo);
-        commitAndCloseTransaction();
-        LOG.info("Avaliação deletada com sucesso!");
     }
 
     public void update(AvaliacaoModulo novaAv, Long id) {
@@ -54,16 +60,34 @@ public class AvaliacaoModuloService {
             throw new RuntimeException("Parâmetro nulo");
         }
 
-        AvaliacaoModulo avaliacaoModulo = avaliacaoModuloDAO.getById(id);
-        validateIfNull(avaliacaoModulo);
+        Validar.validarModulo(novaAv.getModulo());
+        Validar.validarTrabalhador(novaAv.getTrabalhador());
 
-        beginTransaction();
-        avaliacaoModulo.setNotaAvaliacao(novaAv.getNotaAvaliacao());
-        avaliacaoModulo.setAnotacoes(novaAv.getAnotacoes());
-        avaliacaoModulo.setModulo(novaAv.getModulo());
-        avaliacaoModulo.setTrabalhador(novaAv.getTrabalhador());
-        commitAndCloseTransaction();
-        LOG.info("Avaliação atualizada com sucesso!");
+        AvaliacaoModulo avaliacaoModulo = getById(id);
+
+        try {
+            beginTransaction();
+            avaliacaoModulo.setNotaAvaliacao(novaAv.getNotaAvaliacao());
+            avaliacaoModulo.setAnotacoes(novaAv.getAnotacoes());
+            avaliacaoModulo.setModulo(novaAv.getModulo());
+            avaliacaoModulo.setTrabalhador(novaAv.getTrabalhador());
+            commitAndCloseTransaction();
+            LOG.info("Avaliação atualizada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar a avaliação, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public AvaliacaoModulo getById(Long id) {
+        Validar.validarId(id);
+
+        AvaliacaoModulo avaliacaoModulo = avaliacaoModuloDAO.getById(id);
+
+        Validar.validarAvaliacao(avaliacaoModulo);
+
+        LOG.info("Avaliação encontrada!");
+        return avaliacaoModulo;
     }
 
     public List<AvaliacaoModulo> listAll() {
@@ -95,13 +119,6 @@ public class AvaliacaoModuloService {
 
         LOG.info("Número de módulos encontrados: " + avaliacoes.size());
         return avaliacoes;
-    }
-
-    private void validateIfNull(AvaliacaoModulo avaliacaoModulo) {
-        if (avaliacaoModulo == null) {
-            this.LOG.error("A avaliação não existe!");
-            throw new EntityNotFoundException("Avaliação nula");
-        }
     }
 
     private void beginTransaction() {

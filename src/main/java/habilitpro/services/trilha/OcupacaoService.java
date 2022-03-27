@@ -27,13 +27,6 @@ public class OcupacaoService {
         String nome = ocupacao.getNome();
         Validar.validarString(nome);
 
-        LOG.info("Buscando ocupação " + nome);
-        Ocupacao ocupacao1 = findByNome(nome);
-        if (ocupacao1.getNome().equals(nome)) {
-            LOG.error("Esta ocupação já existe!");
-            throw new RuntimeException("Ocupação já existe");
-        }
-
         try {
             beginTransaction();
             ocupacaoDAO.create(ocupacao);

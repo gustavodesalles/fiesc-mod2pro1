@@ -121,17 +121,22 @@ public class EmpresaService {
         String estado = novaEmpresa.getEstado();
         Validar.validarEstado(estado);
 
-        beginTransaction();
-        empresa.setNome(novaEmpresa.getNome());
-        empresa.setCnpj(novaEmpresa.getCnpj());
-        empresa.setTipoEmpresa(novaEmpresa.getTipoEmpresa());
-        empresa.setNomeFilial(novaEmpresa.getNomeFilial());
-        empresa.setSegmento(novaEmpresa.getSegmento());
-        empresa.setCidade(novaEmpresa.getCidade());
-        empresa.setEstado(novaEmpresa.getEstado());
-        empresa.setRegionalSenai(novaEmpresa.getRegionalSenai());
-        commitAndCloseTransaction();
-        LOG.info("Empresa atualizada com sucesso!");
+        try {
+            beginTransaction();
+            empresa.setNome(novaEmpresa.getNome());
+            empresa.setCnpj(novaEmpresa.getCnpj());
+            empresa.setTipoEmpresa(novaEmpresa.getTipoEmpresa());
+            empresa.setNomeFilial(novaEmpresa.getNomeFilial());
+            empresa.setSegmento(novaEmpresa.getSegmento());
+            empresa.setCidade(novaEmpresa.getCidade());
+            empresa.setEstado(novaEmpresa.getEstado());
+            empresa.setRegionalSenai(novaEmpresa.getRegionalSenai());
+            commitAndCloseTransaction();
+            LOG.info("Empresa atualizada com sucesso!");
+        } catch (Exception e) {
+            LOG.error("Erro ao atualizar a empresa, causado por: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public Empresa getById(Long id) {

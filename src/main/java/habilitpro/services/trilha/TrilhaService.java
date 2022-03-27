@@ -156,6 +156,11 @@ public class TrilhaService {
 
         Validar.validarTrabalhador(trabalhador);
 
+        if (!trabalhador.getEmpresa().equals(trilha.getEmpresa())) {
+            LOG.error("O trabalhador e a trilha são de empresas diferentes!");
+            throw new RuntimeException("Empresas diferentes");
+        }
+
         try {
             beginTransaction();
             trilha.getTrabalhadores().add(trabalhador);

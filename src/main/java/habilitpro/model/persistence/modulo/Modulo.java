@@ -37,9 +37,9 @@ public class Modulo {
 
     public Modulo(Trilha trilha, String nome, String habilidades, String tarefa) {
         this.trilha = trilha;
-        this.nome = nome;
-        this.habilidades = habilidades;
-        this.tarefa = tarefa;
+        this.nome = nome.toUpperCase();
+        this.habilidades = habilidades.toUpperCase();
+        this.tarefa = tarefa.toUpperCase();
         this.dataInicio = null;
         this.dataFim = null;
         this.dataPrazo = null;
